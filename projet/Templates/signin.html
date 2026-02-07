@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Sign In{% endblock %}
+
+{% block css %}
+<style>
+    .auth-page {
+        padding-top: 140px;
+        padding-bottom: 80px;
+    }
+
+    .auth-card {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 20px;
+        padding: 28px;
+        border: 1px solid rgba(16, 18, 26, 0.12);
+        box-shadow: 0 18px 40px rgba(16, 18, 26, 0.12);
+    }
+
+    .auth-title {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .auth-sub {
+        color: rgba(16, 18, 26, 0.7);
+        margin-bottom: 20px;
+    }
+
+    .auth-input {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(16, 18, 26, 0.12);
+        margin-bottom: 12px;
+    }
+
+    .auth-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .auth-btn {
+        background: #f4511e;
+        color: #ffffff;
+        border: 0;
+        border-radius: 12px;
+        padding: 10px 16px;
+        font-weight: 600;
+    }
+
+    .auth-link {
+        color: #f4511e;
+        text-decoration: none;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="auth-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-5 offset-lg-3">
+                <div class="auth-card">
+                    <h1 class="auth-title">Sign In</h1>
+                    <p class="auth-sub">Welcome back. Please sign in to your account.</p>
+                    {% if error %}
+                        <div style="color:#b00020; margin-bottom: 12px; font-weight: 600;">{{ error }}</div>
+                    {% endif %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="email" name="email" class="auth-input" placeholder="Email address" required>
+                        <input type="password" name="password" class="auth-input" placeholder="Password" required>
+                        <div class="auth-actions">
+                            <button type="submit" class="auth-btn">Sign In</button>
+                            <a href="/signup/" class="auth-link">Create an account</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block css %}
+<style>
+    .auth-page {
+        padding-top: 140px;
+        padding-bottom: 80px;
+        background: radial-gradient(900px 400px at 10% -10%, #ffe1c4 0%, transparent 60%),
+                    radial-gradient(800px 420px at 90% 0%, #d9fff7 0%, transparent 55%);
+    }
+
+    .auth-card {
+        background: rgba(255, 255, 255, 0.92);
+        border-radius: 22px;
+        padding: 30px;
+        border: 1px solid rgba(16, 18, 26, 0.12);
+        box-shadow: 0 24px 50px rgba(16, 18, 26, 0.12);
+        backdrop-filter: blur(10px);
+    }
+
+    .auth-title {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .auth-sub {
+        color: rgba(16, 18, 26, 0.7);
+        margin-bottom: 20px;
+    }
+
+    .auth-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px 14px;
+    }
+
+    .auth-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .auth-label {
+        font-weight: 600;
+        font-size: 13px;
+        color: rgba(16, 18, 26, 0.7);
+    }
+
+    .auth-input {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(16, 18, 26, 0.12);
+        background: rgba(255, 255, 255, 0.9);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .auth-input:focus {
+        outline: none;
+        border-color: #f4511e;
+        box-shadow: 0 0 0 4px rgba(244, 81, 30, 0.15);
+    }
+
+    .auth-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .auth-btn {
+        background: #f4511e;
+        color: #ffffff;
+        border: 0;
+        border-radius: 12px;
+        padding: 10px 16px;
+        font-weight: 600;
+    }
+
+    .auth-link {
+        color: #f4511e;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .auth-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-top: 12px;
+        color: rgba(16, 18, 26, 0.6);
+        font-size: 13px;
+    }
+
+    @media (max-width: 768px) {
+        .auth-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="auth-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-5 offset-lg-3">
+                <div class="auth-card">
+                    <h1 class="auth-title">Sign Up</h1>
+                    <p class="auth-sub">Create your account to get started.</p>
+                    {% if error %}
+                        <div style="color:#b00020; margin-bottom: 12px; font-weight: 600;">{{ error }}</div>
+                    {% endif %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="auth-grid">
+                            <div class="auth-field">
+                                <label class="auth-label" for="full_name">Full Name</label>
+                                <input type="text" id="full_name" name="full_name" class="auth-input" placeholder="Full name" required>
+                            </div>
+                            <div class="auth-field">
+                                <label class="auth-label" for="email">Email</label>
+                                <input type="email" id="email" name="email" class="auth-input" placeholder="Email address" required>
+                            </div>
+                            <div class="auth-field">
+                                <label class="auth-label" for="phone">Phone</label>
+                                <input type="tel" id="phone" name="phone" class="auth-input" placeholder="Phone number" required>
+                            </div>
+                            <div class="auth-field">
+                                <label class="auth-label" for="birth_date">Date of Birth</label>
+                                <input type="date" id="birth_date" name="birth_date" class="auth-input" required>
+                            </div>
+                            <div class="auth-field">
+                                <label class="auth-label" for="has_disability">Disability</label>
+                                <select id="has_disability" name="has_disability" class="auth-input" required>
+                                    <option value="" disabled selected>Do you have a disability?</option>
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </div>
+                            <div class="auth-field" id="disability-type-field">
+                                <label class="auth-label" for="disability_type">Disability Type</label>
+                                <input type="text" id="disability_type" name="disability_type" class="auth-input" placeholder="Disability type (if yes)">
+                            </div>
+                            <div class="auth-field">
+                                <label class="auth-label" for="password">Password</label>
+                                <input type="password" id="password" name="password" class="auth-input" placeholder="Password" required>
+                            </div>
+                            <div class="auth-field">
+                                <label class="auth-label" for="confirm_password">Confirm Password</label>
+                                <input type="password" id="confirm_password" name="confirm_password" class="auth-input" placeholder="Confirm password" required>
+                            </div>
+                        </div>
+                        <div class="auth-actions">
+                            <button type="submit" class="auth-btn">Sign Up</button>
+                            <a href="/signin/" class="auth-link">Already have an account?</a>
+                        </div>
+                        <div class="auth-footer">
+                            <span>By signing up, you agree to our terms.</span>
+                            <span>Need help? Contact support.</span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const disabilitySelect = document.getElementById('has_disability');
+    const disabilityField = document.getElementById('disability-type-field');
+
+    function toggleDisabilityField() {
+        const show = disabilitySelect.value === 'yes';
+        disabilityField.style.display = show ? 'flex' : 'none';
+    }
+
+    if (disabilitySelect && disabilityField) {
+        toggleDisabilityField();
+        disabilitySelect.addEventListener('change', toggleDisabilityField);
+    }
+</script>
+{% endblock %}

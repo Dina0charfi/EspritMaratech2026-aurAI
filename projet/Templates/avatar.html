@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Avatar 3D</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        #avatar-container { width: 100%; height: 500px; }
+    </style>
+</head>
+<body>
+<div id="avatar-container"></div>
+
+<script type="module">
+    // Import depuis CDN
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.module.js';
+    import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.155.0/examples/jsm/loaders/GLTFLoader.js';
+
+    const container = document.getElementById('avatar-container');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xf2f2f2);
+
+    const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(0, 1, 1);
+    scene.add(ambientLight, directionalLight);
+
+    const loader = new GLTFLoader();
+    loader.load("{% static 'avatars/Animated_Woman.glb' %}", function(gltf) {
+        const model = gltf.scene;
+        scene.add(model);
+
+        const box = new THREE.Box3().setFromObject(model);
+        const center = box.getCenter(new THREE.Vector3());
+        model.position.sub(center);
+
+        const size = box.getSize(new THREE.Vector3());
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const safeDim = maxDim > 0 ? maxDim : 2;
+        const fov = camera.fov * (Math.PI / 180);
+        let cameraZ = Math.abs(safeDim / 2 / Math.tan(fov / 2)) * 1.6;
+        camera.position.set(0, 0, cameraZ);
+
+        camera.near = safeDim / 100;
+        camera.far = safeDim * 100;
+        camera.updateProjectionMatrix();
+
+    }, undefined, function(error){
+        console.error('GLB load error:', error);
+        container.innerHTML = '<div style="padding:12px;color:red;">Error: unable to load Animated_Woman.glb</div>';
+    });
+
+    window.addEventListener('resize', () => {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+    });
+
+    function animate() {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+    }
+    animate();
+</script>
+
+</body>
+</html>
