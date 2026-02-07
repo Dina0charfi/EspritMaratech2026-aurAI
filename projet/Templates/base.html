@@ -40,6 +40,7 @@ https://templatemo.com/tm-540-lava-landing-page
             display: flex;
             gap: 8px;
             align-items: center;
+            z-index: 30;
         }
 
         .signup-btn,
@@ -63,6 +64,7 @@ https://templatemo.com/tm-540-lava-landing-page
             position: relative;
             display: flex;
             align-items: center;
+            z-index: 30;
         }
 
         .profile-toggle {
@@ -113,6 +115,12 @@ https://templatemo.com/tm-540-lava-landing-page
 
         .profile-menu:focus-within .profile-dropdown,
         .profile-menu:hover .profile-dropdown {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .profile-menu.is-open .profile-dropdown {
             opacity: 1;
             pointer-events: auto;
             transform: translateY(0);
@@ -173,14 +181,14 @@ https://templatemo.com/tm-540-lava-landing-page
                         <!-- ***** Logo Start ***** -->
                         <a href="/" class="logo">Voice-to-Sign</a>
                         <ul class="nav">
-                            <li class="scroll-to-section"><a href="/" class="menu-item">Home</a></li>
-                            <li class="scroll-to-section"><a href="/#about" class="menu-item">About</a></li>
-                            <li class="scroll-to-section"><a href="/#testimonials" class="menu-item">Team</a></li>
+                            <li class="scroll-to-section"><a href="/" class="menu-item">Accueil</a></li>
+                            <li class="scroll-to-section"><a href="/#about" class="menu-item">A propos</a></li>
+                            <li class="scroll-to-section"><a href="/#testimonials" class="menu-item">Equipe</a></li>
                             <li class="scroll-to-section"><a href="/#contact-us" class="menu-item">Contact</a></li>
-                            <li class="scroll-to-section"><a href="/transcribe/" class="menu-item">Transcribe</a></li>
+                            <li class="scroll-to-section"><a href="/transcribe/" class="menu-item">Transcrire</a></li>
                             {% if user.is_authenticated %}
                                 <li class="scroll-to-section nav-profile"><a href="/profile/" class="menu-item">Voir profil</a></li>
-                                <li class="scroll-to-section nav-signout"><a href="/signout/" class="menu-item">Sign Out</a></li>
+                                <li class="scroll-to-section nav-signout"><a href="/signout/" class="menu-item">Se deconnecter</a></li>
                             {% endif %}
                         </ul>
 
@@ -197,12 +205,12 @@ https://templatemo.com/tm-540-lava-landing-page
                                     </button>
                                     <div class="profile-dropdown">
                                         <a href="/profile/">Voir profil</a>
-                                        <a href="/signout/">Sign Out</a>
+                                        <a href="/signout/">Se deconnecter</a>
                                     </div>
                                 </div>
                             {% else %}
-                                <a href="/signin/" class="signin-btn">Sign In</a>
-                                <a href="/signup/" class="signup-btn">Sign Up</a>
+                                <a href="/signin/" class="signin-btn">Se connecter</a>
+                                <a href="/signup/" class="signup-btn">S'inscrire</a>
                             {% endif %}
                         </div>
 
@@ -231,25 +239,25 @@ https://templatemo.com/tm-540-lava-landing-page
                                 <div class="row">
                                     <div class="col-md-6 col-sm-12">
                                         <fieldset>
-                                            <input name="name" type="text" id="name" placeholder="Full Name" required=""
+                                            <input name="name" type="text" id="name" placeholder="Nom complet" required=""
                                                 style="background-color: rgba(250,250,250,0.3);">
                                         </fieldset>
                                     </div>
                                     <div class="col-md-6 col-sm-12">
                                         <fieldset>
-                                            <input name="email" type="text" id="email" placeholder="Email Address"
+                                            <input name="email" type="text" id="email" placeholder="Adresse email"
                                                 required="" style="background-color: rgba(250,250,250,0.3);">
                                         </fieldset>
                                     </div>
                                     <div class="col-lg-12">
                                         <fieldset>
-                                            <textarea name="message" rows="6" id="message" placeholder="Your Message"
+                                            <textarea name="message" rows="6" id="message" placeholder="Votre message"
                                                 required="" style="background-color: rgba(250,250,250,0.3);"></textarea>
                                         </fieldset>
                                     </div>
                                     <div class="col-lg-12">
                                         <fieldset>
-                                            <button type="submit" id="form-submit" class="main-button">Send Message</button>
+                                            <button type="submit" id="form-submit" class="main-button">Envoyer</button>
                                         </fieldset>
                                     </div>
                                 </div>
@@ -258,10 +266,11 @@ https://templatemo.com/tm-540-lava-landing-page
                     </div>
                     <!-- ***** Contact Form End ***** -->
                     <div class="right-content col-lg-6 col-md-12 col-sm-12">
-                        <h2>More About <em>the Platform</em></h2>
-                        <p>This platform turns speech into text and displays the matching signs to support
-                            communication and learning.
-                            <br><br>If you want to reach us or send suggestions, you can use this form.</p>
+                        <h2>A propos de <em>la plateforme</em></h2>
+                        <p>Voice-to-Sign est pensee pour la Langue des Signes Tunisienne (LST). Elle aide
+                            a convertir la voix en texte et a afficher des signes pour soutenir la communication
+                            et l'apprentissage.
+                            <br><br>Pour nous contacter ou proposer une idee, utilise ce formulaire.</p>
                         <ul class="social">
                             <li><a href="https://fb.com/templatemo"><i class="fa fa-facebook"></i></a></li>
                             <li><a href="#"><i class="fa fa-twitter"></i></a></li>
@@ -275,7 +284,7 @@ https://templatemo.com/tm-540-lava-landing-page
             <div class="row">
                 <div class="col-lg-12">
                     <div class="sub-footer">
-                        <p>Copyright &copy; 2026 Voice-to-Sign Platform
+                        <p>Copyright &copy; 2026 Voice-to-Sign LST
 
                         | Designed by <a rel="nofollow" href="https://templatemo.com">TemplateMo</a></p>
                     </div>
@@ -300,6 +309,35 @@ https://templatemo.com/tm-540-lava-landing-page
 
     <!-- Global Init -->
     <script src="{% static 'assets/js/custom.js' %}"></script>
+
+    <script>
+        (function () {
+            var profileMenu = document.querySelector('.profile-menu');
+            var profileToggle = document.querySelector('.profile-toggle');
+
+            if (!profileMenu || !profileToggle) {
+                return;
+            }
+
+            profileToggle.addEventListener('click', function (event) {
+                event.stopPropagation();
+                profileMenu.classList.toggle('is-open');
+                profileToggle.setAttribute('aria-expanded', profileMenu.classList.contains('is-open'));
+            });
+
+            document.addEventListener('click', function () {
+                profileMenu.classList.remove('is-open');
+                profileToggle.setAttribute('aria-expanded', 'false');
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    profileMenu.classList.remove('is-open');
+                    profileToggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+        })();
+    </script>
 
     {% block extra_js %}{% endblock %}
 </body>
