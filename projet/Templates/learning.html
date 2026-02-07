@@ -7,91 +7,289 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <style>
-    .learning-page { padding: 140px 0 80px; text-align: center; }
-    .learning-video { border: 1px solid #ccc; margin-top: 10px; }
-    .learning-feedback { font-size: 24px; margin-top: 10px; }
-    .learning-sign { width: 200px; margin-top: 20px; }
-    .learning-button { padding: 10px 20px; margin-top: 10px; font-size: 16px; cursor: pointer; }
-    .learning-cards { margin-top: 40px; }
-    .learning-cards-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-    .learning-card {
-        background: #ffffff;
-        border-radius: 16px;
-        border: 1px solid rgba(16, 18, 26, 0.12);
-        padding: 18px;
+    :root {
+        --ink: #1d1a14;
+        --muted: rgba(29, 26, 20, 0.65);
+        --paper: #fffdf7;
+        --peach: #f7c7a9;
+        --coral: #f06a3f;
+        --teal: #0f7c7f;
+        --shadow: 0 18px 40px rgba(21, 18, 12, 0.12);
+        --radius-lg: 22px;
+        --radius-md: 16px;
+        --radius-sm: 12px;
+    }
+
+    .learning-page {
+        position: relative;
+        padding: 170px 0 110px;
+        background: radial-gradient(circle at 15% 10%, rgba(240, 106, 63, 0.12), transparent 45%),
+            radial-gradient(circle at 80% 0%, rgba(15, 124, 127, 0.12), transparent 40%),
+            linear-gradient(180deg, #fff8f1 0%, #f9fbff 55%, #ffffff 100%);
+        color: var(--ink);
         text-align: left;
-        box-shadow: 0 12px 24px rgba(16, 18, 26, 0.08);
+        overflow: hidden;
+    }
+
+    .learning-page::before,
+    .learning-page::after {
+        content: "";
+        position: absolute;
+        width: 320px;
+        height: 320px;
+        border-radius: 999px;
+        filter: blur(0px);
+        opacity: 0.2;
+        z-index: 0;
+    }
+
+    .learning-page::before {
+        background: #f7c7a9;
+        top: -80px;
+        right: -60px;
+    }
+
+    .learning-page::after {
+        background: #9ad7d9;
+        bottom: -120px;
+        left: -60px;
+    }
+
+    .learning-page .container {
+        position: relative;
+        z-index: 1;
+        max-width: 1120px;
+    }
+
+    .learning-page h2 {
+        font-size: clamp(32px, 4vw, 46px);
+        text-align: center;
+        letter-spacing: 0.5px;
+        margin-bottom: 20px;
+    }
+
+    .learning-page h3 {
+        font-size: clamp(22px, 2.4vw, 30px);
+        margin-bottom: 16px;
+        text-align: center;
+    }
+
+    .learning-page form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        justify-content: center;
+        margin: 28px auto 36px;
+        padding: 18px;
+        border-radius: var(--radius-lg);
+        background: rgba(255, 255, 255, 0.85);
+        box-shadow: var(--shadow);
+        border: 1px solid rgba(29, 26, 20, 0.08);
+        max-width: 680px;
+    }
+
+    .learning-page input[type="text"] {
+        flex: 1 1 320px;
+        border-radius: 999px;
+        border: 1px solid rgba(29, 26, 20, 0.15);
+        padding: 12px 18px;
+        font-size: 15px;
+        background: #fff;
+    }
+
+    .learning-page input[type="text"]:focus {
+        outline: none;
+        border-color: rgba(240, 106, 63, 0.7);
+        box-shadow: 0 0 0 3px rgba(240, 106, 63, 0.15);
+    }
+
+    .learning-button {
+        border: none;
+        border-radius: 999px;
+        padding: 12px 22px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        color: #fff;
+        background: linear-gradient(135deg, #f06a3f, #f08d4f);
+        box-shadow: 0 12px 20px rgba(240, 106, 63, 0.25);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .learning-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 18px 26px rgba(240, 106, 63, 0.3);
+    }
+
+    .learning-sign {
+        width: min(220px, 70vw);
+        margin: 18px auto 10px;
+        border-radius: var(--radius-md);
+        border: 1px solid rgba(29, 26, 20, 0.12);
+        box-shadow: var(--shadow);
+        background: #fff;
+        padding: 10px;
+    }
+
+    .learning-video {
+        border-radius: var(--radius-md);
+        border: 1px solid rgba(29, 26, 20, 0.12);
+        box-shadow: var(--shadow);
+        margin-top: 12px;
+        background: #fff;
+    }
+
+    .learning-feedback {
+        font-size: 18px;
+        font-weight: 600;
+        margin-top: 14px;
+        padding: 10px 16px;
+        border-radius: 999px;
+        display: inline-block;
+        background: rgba(15, 124, 127, 0.12);
+        color: var(--ink);
+    }
+
+    .learning-cards {
+        margin-top: 56px;
+    }
+
+    .learning-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 22px;
+    }
+
+    .learning-card {
+        background: var(--paper);
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(29, 26, 20, 0.08);
+        padding: 20px;
+        text-align: left;
+        box-shadow: var(--shadow);
         height: 100%;
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        animation: rise 0.7s ease both;
     }
+
+    .learning-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 24px 48px rgba(21, 18, 12, 0.16);
+    }
+
     .learning-card-image {
         width: 100%;
-        height: 140px;
+        height: 160px;
         object-fit: cover;
-        border-radius: 12px;
+        border-radius: var(--radius-md);
     }
-    .learning-card h4 { margin: 0; font-size: 18px; }
-    .learning-card p { margin: 0; color: rgba(16, 18, 26, 0.7); }
-    .learning-card a {
+
+    .learning-card h4,
+    .learning-event h4 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .learning-card p,
+    .learning-event p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.6;
+    }
+
+    .learning-card a,
+    .learning-event a {
         margin-top: auto;
-        color: #f4511e;
+        color: var(--teal);
         font-weight: 600;
         text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
     }
-    .learning-events { margin-top: 40px; text-align: left; }
-    .learning-events h3 { text-align: center; margin-bottom: 16px; }
-    .learning-events-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+
+    .learning-card a::after,
+    .learning-event a::after {
+        content: "→";
+        font-size: 16px;
+    }
+
+    .learning-events {
+        margin-top: 60px;
+        text-align: left;
+    }
+
+    .learning-events-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 22px;
+    }
+
     .learning-event {
         background: #ffffff;
-        border-radius: 16px;
-        border: 1px solid rgba(16, 18, 26, 0.12);
-        padding: 18px;
-        box-shadow: 0 12px 24px rgba(16, 18, 26, 0.08);
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(29, 26, 20, 0.08);
+        padding: 20px;
+        box-shadow: var(--shadow);
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
         height: 100%;
+        animation: rise 0.8s ease both;
     }
-    .learning-event h4 { margin: 0; font-size: 18px; }
-    .learning-event-meta { font-size: 13px; color: rgba(16, 18, 26, 0.6); }
-    .learning-event p { margin: 0; color: rgba(16, 18, 26, 0.75); }
-    .learning-event a { margin-top: auto; color: #f4511e; font-weight: 600; text-decoration: none; }
-    .learning-map { margin-top: 40px; text-align: left; }
-    .learning-map h3 { text-align: center; margin-bottom: 16px; }
+
+    .learning-event-meta {
+        font-size: 13px;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+        color: rgba(29, 26, 20, 0.5);
+    }
+
+    .learning-map {
+        margin-top: 60px;
+        text-align: left;
+    }
+
     #events-map {
         width: 100%;
-        height: 360px;
-        border-radius: 16px;
-        border: 1px solid rgba(16, 18, 26, 0.12);
+        height: 380px;
+        min-height: 360px;
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(29, 26, 20, 0.12);
         overflow: hidden;
-        box-shadow: 0 12px 24px rgba(16, 18, 26, 0.08);
+        box-shadow: var(--shadow);
+        background: #fff;
+        animation: rise 0.9s ease both;
     }
-    @media (max-width: 991px) {
-        .learning-cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        .learning-events-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
-    @media (max-width: 640px) {
-        .learning-cards-grid { grid-template-columns: 1fr; }
-        .learning-events-grid { grid-template-columns: 1fr; }
-    }
-    #events-map {
-    width: 100%;
-    height: 360px;
-    min-height: 360px;
-}
-header,
-.navbar,
-.header-area {
-    position: fixed; /* ou sticky */
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 9999; /* PLUS GRAND que Leaflet */
-    background: #fff;
-}
 
+    @keyframes rise {
+        from {
+            opacity: 0;
+            transform: translateY(14px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 991px) {
+        .learning-cards-grid,
+        .learning-events-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .learning-page { padding: 150px 0 90px; }
+    }
+
+    @media (max-width: 640px) {
+        .learning-cards-grid,
+        .learning-events-grid { grid-template-columns: 1fr; }
+        .learning-page form { margin: 20px auto 28px; }
+        .learning-page h2 { font-size: 30px; }
+    }
 
 </style>
 {% endblock %}
