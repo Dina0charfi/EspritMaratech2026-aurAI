@@ -11,8 +11,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, redirect
+from django.contrib import messages
 import torch
-from .models import UserProfile
+from .models import UserProfile, Reclamation
 from .utils_sign import get_signs_for_text
 from .utils import arabic_to_latin  # si tu as ta fonction de translittération
 
@@ -114,6 +115,54 @@ def show_avatar(request):
         context["sign_image"] = sign_image  # URL ou base64
         context["word"] = translit_word
     return render(request, "avatar.html", context)
+
+
+from django.shortcuts import render
+from .utils_sign import get_sign_for_word
+from .utils import arabic_to_latin
+
+import json
+from pathlib import Path
+
+def learning(request):
+    context = {"sign_image": None, "word": "", "reference_landmarks": {}}
+    if request.method == "POST":
+        word_input = request.POST.get("word_input").strip().lower()
+        # Récupérer l'image du signe
+        context["sign_image"] = get_sign_for_word(word_input)
+        context["word"] = word_input
+
+        # Charger les landmarks de référence
+        landmarks_path = Path("reference_landmarks.json")
+        if landmarks_path.exists():
+            with open(landmarks_path, "r") as f:
+                all_landmarks = json.load(f)
+            context["reference_landmarks"] = all_landmarks.get(word_input, {})
+
+    return render(request, "learning.html", context)
+
+
+def submit_reclamation(request):
+    if request.method == "POST":
+        name = request.POST.get("name", "").strip()
+        email = request.POST.get("email", "").strip()
+        category = request.POST.get("category", "").strip()
+        message = request.POST.get("message", "").strip()
+
+        if name and email and message and category:
+            Reclamation.objects.create(
+                name=name,
+                email=email,
+                category=category,
+                message=message,
+            )
+            messages.success(request, "Message sent successfully.")
+        else:
+            messages.error(request, "Please fill in all fields.")
+
+    return redirect(request.META.get("HTTP_REFERER", "/"))
+
+
 
 
 def signin(request):

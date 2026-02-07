@@ -13,3 +13,9 @@ db.sqlite3
 # IDE
 .vscode/
 .idea/
+
+
+# Ignorer tous les fichiers PyTorch
+*.pth
+*.pt
+*.pyc

@@ -97,13 +97,13 @@
                             <img src="{% static 'assets/images/testimonial-author-1.png' %}" alt="Profile" class="profile-photo">
                         {% endif %}
                         <div>
-                            <h1 class="profile-title">Voir profil</h1>
-                            <p class="profile-sub">Vos informations personnelles.</p>
+                            <h1 class="profile-title">Profile</h1>
+                            <p class="profile-sub">Your personal information.</p>
                         </div>
                     </div>
                     <div class="profile-grid">
                         <div class="profile-item">
-                            <span class="profile-label">Nom complet</span>
+                            <span class="profile-label">Full name</span>
                             <span class="profile-value">{{ user.first_name|default:user.username }}</span>
                         </div>
                         <div class="profile-item">
@@ -111,19 +111,19 @@
                             <span class="profile-value">{{ user.email }}</span>
                         </div>
                         <div class="profile-item">
-                            <span class="profile-label">Telephone</span>
+                            <span class="profile-label">Phone</span>
                             <span class="profile-value">{{ profile.phone|default:"-" }}</span>
                         </div>
                         <div class="profile-item">
-                            <span class="profile-label">Date de naissance</span>
+                            <span class="profile-label">Date of birth</span>
                             <span class="profile-value">{{ profile.birth_date|default:"-" }}</span>
                         </div>
                         <div class="profile-item">
-                            <span class="profile-label">Handicap</span>
-                            <span class="profile-value">{% if profile and profile.has_disability %}Oui{% else %}Non{% endif %}</span>
+                            <span class="profile-label">Disability</span>
+                            <span class="profile-value">{% if profile and profile.has_disability %}Yes{% else %}No{% endif %}</span>
                         </div>
                         <div class="profile-item">
-                            <span class="profile-label">Type de handicap</span>
+                            <span class="profile-label">Disability type</span>
                             <span class="profile-value">{{ profile.disability_type|default:"-" }}</span>
                         </div>
                     </div>

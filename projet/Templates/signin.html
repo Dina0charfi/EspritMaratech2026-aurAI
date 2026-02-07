@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Se connecter{% endblock %}
+{% block title %}Sign In{% endblock %}
 
 {% block css %}
 <style>
@@ -69,18 +69,18 @@
         <div class="row">
             <div class="col-lg-5 offset-lg-3">
                 <div class="auth-card">
-                    <h1 class="auth-title">Se connecter</h1>
-                    <p class="auth-sub">Connectez-vous pour acceder aux outils LST en Tunisie.</p>
+                    <h1 class="auth-title">Sign In</h1>
+                    <p class="auth-sub">Sign in to access Tunisian Sign Language tools.</p>
                     {% if error %}
                         <div style="color:#b00020; margin-bottom: 12px; font-weight: 600;">{{ error }}</div>
                     {% endif %}
                     <form method="post">
                         {% csrf_token %}
-                        <input type="email" name="email" class="auth-input" placeholder="Adresse email" required>
-                        <input type="password" name="password" class="auth-input" placeholder="Mot de passe" required>
+                        <input type="email" name="email" class="auth-input" placeholder="Email address" required>
+                        <input type="password" name="password" class="auth-input" placeholder="Password" required>
                         <div class="auth-actions">
-                            <button type="submit" class="auth-btn">Se connecter</button>
-                            <a href="/signup/" class="auth-link">Creer un compte</a>
+                            <button type="submit" class="auth-btn">Sign In</button>
+                            <a href="/signup/" class="auth-link">Create an account</a>
                         </div>
                     </form>
                 </div>

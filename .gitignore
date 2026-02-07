@@ -1,4 +1,0 @@
-# Ignorer tous les fichiers PyTorch
-*.pth
-*.pt
-*.pyc

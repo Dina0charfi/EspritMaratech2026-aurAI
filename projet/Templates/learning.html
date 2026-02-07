@@ -1,0 +1,320 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Learning{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<style>
+    .learning-page { padding: 140px 0 80px; text-align: center; }
+    .learning-video { border: 1px solid #ccc; margin-top: 10px; }
+    .learning-feedback { font-size: 24px; margin-top: 10px; }
+    .learning-sign { width: 200px; margin-top: 20px; }
+    .learning-button { padding: 10px 20px; margin-top: 10px; font-size: 16px; cursor: pointer; }
+    .learning-cards { margin-top: 40px; }
+    .learning-cards-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .learning-card {
+        background: #ffffff;
+        border-radius: 16px;
+        border: 1px solid rgba(16, 18, 26, 0.12);
+        padding: 18px;
+        text-align: left;
+        box-shadow: 0 12px 24px rgba(16, 18, 26, 0.08);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .learning-card-image {
+        width: 100%;
+        height: 140px;
+        object-fit: cover;
+        border-radius: 12px;
+    }
+    .learning-card h4 { margin: 0; font-size: 18px; }
+    .learning-card p { margin: 0; color: rgba(16, 18, 26, 0.7); }
+    .learning-card a {
+        margin-top: auto;
+        color: #f4511e;
+        font-weight: 600;
+        text-decoration: none;
+    }
+    .learning-events { margin-top: 40px; text-align: left; }
+    .learning-events h3 { text-align: center; margin-bottom: 16px; }
+    .learning-events-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .learning-event {
+        background: #ffffff;
+        border-radius: 16px;
+        border: 1px solid rgba(16, 18, 26, 0.12);
+        padding: 18px;
+        box-shadow: 0 12px 24px rgba(16, 18, 26, 0.08);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        height: 100%;
+    }
+    .learning-event h4 { margin: 0; font-size: 18px; }
+    .learning-event-meta { font-size: 13px; color: rgba(16, 18, 26, 0.6); }
+    .learning-event p { margin: 0; color: rgba(16, 18, 26, 0.75); }
+    .learning-event a { margin-top: auto; color: #f4511e; font-weight: 600; text-decoration: none; }
+    .learning-map { margin-top: 40px; text-align: left; }
+    .learning-map h3 { text-align: center; margin-bottom: 16px; }
+    #events-map {
+        width: 100%;
+        height: 360px;
+        border-radius: 16px;
+        border: 1px solid rgba(16, 18, 26, 0.12);
+        overflow: hidden;
+        box-shadow: 0 12px 24px rgba(16, 18, 26, 0.08);
+    }
+    @media (max-width: 991px) {
+        .learning-cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .learning-events-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 640px) {
+        .learning-cards-grid { grid-template-columns: 1fr; }
+        .learning-events-grid { grid-template-columns: 1fr; }
+    }
+    #events-map {
+    width: 100%;
+    height: 360px;
+    min-height: 360px;
+}
+header,
+.navbar,
+.header-area {
+    position: fixed; /* ou sticky */
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9999; /* PLUS GRAND que Leaflet */
+    background: #fff;
+}
+
+
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="learning-page">
+    <div class="container">
+        <h2>Learning Mode - Sign Language</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="text" name="word_input" placeholder="Type a word (Arabic or Latin)">
+            <button type="submit" class="learning-button">Choose word</button>
+        </form>
+
+        {% if sign_image %}
+            <h3>Word: {{ word }}</h3>
+            <img src="{{ sign_image }}" class="learning-sign" alt="Sign for {{ word }}">
+            <div>
+                <button id="checkGesture" class="learning-button">I made the sign</button>
+            </div>
+
+            <video id="video" width="400" height="300" autoplay muted playsinline class="learning-video"></video>
+            <div id="feedback" class="learning-feedback"></div>
+        {% endif %}
+
+        <div class="learning-cards">
+            <h3>Learning Tips & Videos</h3>
+            <div class="learning-cards-grid">
+                <div class="learning-card">
+                    <img src="{% static 'assets/images/ecole.jpg' %}" alt="AMIDEAST Tunisia learning session" class="learning-card-image">
+                    <h4>AMIDEAST Tunisia</h4>
+                    <p>AMIDEAST Tunisia hosts a group of young hearing-impaired learners in their first English session using Tunisian Sign Language.</p>
+                    <p>Ms. Manel Bergaoui initiated the program to make learning inclusive and accessible.</p>
+                    <a href="#">More information</a>
+                </div>
+                <div class="learning-card">
+                    <img src="{% static 'assets/images/image.jpg' %}" alt="Deaf association in Tunisia" class="learning-card-image">
+                    <h4>Workplace Communication</h4>
+                    <p>Common workplace signs to help teams collaborate and share instructions clearly.</p>
+                    <a href="#">More information</a>
+                </div>
+                <div class="learning-card">
+                    <img src="{% static 'assets/images/transport.jpg' %}" alt="Transport and travel in Tunisia" class="learning-card-image">
+                    <h4>Transport & Travel</h4>
+                    <p>Useful signs for stations, tickets, directions, and daily transport in Tunisia.</p>
+                    <a href="#">More information</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="learning-events">
+            <h3>Upcoming Events</h3>
+            <div class="learning-events-grid">
+                <div class="learning-event" data-scroll-reveal="enter bottom move 20px over 0.6s after 0.1s">
+                    <h4>TSL Basics Workshop</h4>
+                    <div class="learning-event-meta">March 12, 2026 - Tunis</div>
+                    <p>Intro session for families and educators to learn everyday TSL signs.</p>
+                    <a href="#">View details</a>
+                </div>
+                <div class="learning-event" data-scroll-reveal="enter bottom move 20px over 0.6s after 0.2s">
+                    <h4>Inclusive Classroom Day</h4>
+                    <div class="learning-event-meta">April 5, 2026 - Sousse</div>
+                    <p>Activities and tips for supporting Deaf learners in Tunisian schools.</p>
+                    <a href="#">View details</a>
+                </div>
+                <div class="learning-event" data-scroll-reveal="enter bottom move 20px over 0.6s after 0.3s">
+                    <h4>Transport Access Meetup</h4>
+                    <div class="learning-event-meta">May 2, 2026 - Sfax</div>
+                    <p>Community meetup focused on accessible travel and public transport signs.</p>
+                    <a href="#">View details</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="learning-map">
+            <h3>Events Map</h3>
+            <div id="events-map" ></div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+{% if sign_image %}
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/hands.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1640029074/camera_utils.js"></script>
+
+<script>
+        const videoElement = document.getElementById('video');
+        const feedback = document.getElementById('feedback');
+        const checkBtn = document.getElementById('checkGesture');
+        const referenceLandmarks = {{ reference_landmarks|default:"null"|safe }}; // landmarks de ton mot
+
+        let lastDetected = false;
+        let lastScore = null;
+        let lastGestureOk = false;
+        const strictThreshold = 0.12;
+
+        const hands = new Hands({
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/${file}`
+        });
+        hands.setOptions({
+            maxNumHands: 1,
+            modelComplexity: 0,
+            minDetectionConfidence: 0.6,
+            minTrackingConfidence: 0.6
+        });
+
+        function normalizeLandmarks(landmarks) {
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+            landmarks.forEach(p => {
+                minX = Math.min(minX, p.x);
+                minY = Math.min(minY, p.y);
+                maxX = Math.max(maxX, p.x);
+                maxY = Math.max(maxY, p.y);
+            });
+            const scale = Math.max(maxX - minX, maxY - minY) || 1;
+            return landmarks.map(p => ({ x: (p.x - minX)/scale, y: (p.y - minY)/scale }));
+        }
+
+        function compareHands(user, reference) {
+            if (!Array.isArray(user) || !Array.isArray(reference)) return null;
+            if (user.length !== reference.length) return null;
+            const u = normalizeLandmarks(user);
+            const r = normalizeLandmarks(reference);
+            let total = 0;
+            for (let i = 0; i < u.length; i++) {
+                const dx = u[i].x - r[i].x;
+                const dy = u[i].y - r[i].y;
+                total += Math.sqrt(dx*dx + dy*dy);
+            }
+            return total / u.length;
+        }
+
+        hands.onResults(results => {
+            if (!results.multiHandLandmarks || results.multiHandLandmarks.length === 0) {
+                lastDetected = false;
+                lastGestureOk = false;
+                return;
+            }
+
+            lastDetected = true;
+            const landmarks = results.multiHandLandmarks[0].map(lm => ({ x: lm.x, y: lm.y }));
+
+            if (Array.isArray(referenceLandmarks) && referenceLandmarks.length === landmarks.length) {
+                const avg = compareHands(landmarks, referenceLandmarks);
+                lastScore = avg;
+                lastGestureOk = avg !== null && avg < strictThreshold;
+            } else {
+                lastScore = null;
+                lastGestureOk = false;
+            }
+        });
+
+        const camera = new Camera(videoElement, {
+            onFrame: async () => { await hands.send({image: videoElement}); },
+            width: 400,
+            height: 300
+        });
+        camera.start().catch(err => {
+            console.error(err);
+            feedback.innerHTML = '❌ Camera blocked or unavailable';
+        });
+
+        checkBtn.onclick = () => {
+            if (!lastDetected) {
+                feedback.innerHTML = '❌ Hand not detected';
+                feedback.style.color = 'red';
+                return;
+            }
+            if (!Array.isArray(referenceLandmarks) || referenceLandmarks.length === 0) {
+                feedback.innerHTML = '❌ No reference for this word';
+                feedback.style.color = 'red';
+                return;
+            }
+            if (lastGestureOk) {
+                feedback.innerHTML = '✅ Bravo !';
+                feedback.style.color = 'green';
+            } else if (lastScore > 0.25) {
+                feedback.innerHTML = '❌ Try again';
+                feedback.style.color = 'red';
+            } else {
+                feedback.innerHTML = '⚠️ Almost correct, adjust your sign';
+                feedback.style.color = 'orange';
+            }
+        };
+</script>
+{% endif %}
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const mapEl = document.getElementById('events-map');
+    if (!mapEl) return;
+
+    const map = L.map('events-map').setView([34.5, 10.0], 6.5);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const events = [
+        { title: 'TSL Basics Workshop', coords: [36.8065, 10.1815] },
+        { title: 'Inclusive Classroom Day', coords: [35.8245, 10.6346] },
+        { title: 'Transport Access Meetup', coords: [34.7406, 10.7603] }
+    ];
+
+    events.forEach(e => {
+        L.marker(e.coords).addTo(map).bindPopup(e.title);
+    });
+
+    // 🔥 LE FIX MAGIQUE
+    setTimeout(() => {
+        map.invalidateSize();
+    }, 500);
+
+    window.addEventListener('resize', () => {
+        map.invalidateSize();
+    });
+});
+</script>
+
+{% endblock %}

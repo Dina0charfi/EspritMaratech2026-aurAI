@@ -13,3 +13,20 @@ class UserProfile(models.Model):
 
 	def __str__(self):
 		return f"Profile for {self.user.username}"
+
+
+class Reclamation(models.Model):
+	CATEGORY_CHOICES = [
+		("recommendation", "Recommendation"),
+		("alert", "Alert"),
+		("reclamation", "Reclamation"),
+	]
+
+	name = models.CharField(max_length=120)
+	email = models.EmailField()
+	category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
+	message = models.TextField()
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	def __str__(self):
+		return f"{self.category} from {self.name}"
