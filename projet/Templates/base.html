@@ -39,6 +39,7 @@ https://templatemo.com/tm-540-lava-landing-page
             transform: translateY(-50%);
             display: flex;
             gap: 8px;
+            align-items: center;
         }
 
         .signup-btn,
@@ -58,11 +59,106 @@ https://templatemo.com/tm-540-lava-landing-page
             border: 1px solid #f4511e;
         }
 
+        .profile-menu {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid rgba(16, 18, 26, 0.1);
+            border-radius: 999px;
+            padding: 4px 10px 4px 4px;
+            background: #ffffff;
+            color: #10121a;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(244, 81, 30, 0.2);
+        }
+
+        .profile-name {
+            font-size: 14px;
+            max-width: 120px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 10px);
+            min-width: 180px;
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid rgba(16, 18, 26, 0.12);
+            box-shadow: 0 16px 30px rgba(16, 18, 26, 0.12);
+            padding: 10px;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-6px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 20;
+        }
+
+        .profile-menu:focus-within .profile-dropdown,
+        .profile-menu:hover .profile-dropdown {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .profile-dropdown a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            color: #10121a;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .profile-dropdown a:hover {
+            background: rgba(244, 81, 30, 0.12);
+            color: #f4511e;
+        }
+
+        .nav-signout {
+            display: none;
+        }
+
+        .nav-profile {
+            display: none;
+        }
+
         @media (max-width: 767px) {
             .auth-btns {
                 position: static;
                 transform: none;
                 margin-left: 0;
+            }
+
+            .profile-name {
+                max-width: 90px;
+            }
+
+            .nav-signout {
+                display: block;
+            }
+
+            .nav-profile {
+                display: block;
             }
         }
     </style>
@@ -82,11 +178,32 @@ https://templatemo.com/tm-540-lava-landing-page
                             <li class="scroll-to-section"><a href="/#testimonials" class="menu-item">Team</a></li>
                             <li class="scroll-to-section"><a href="/#contact-us" class="menu-item">Contact</a></li>
                             <li class="scroll-to-section"><a href="/transcribe/" class="menu-item">Transcribe</a></li>
+                            {% if user.is_authenticated %}
+                                <li class="scroll-to-section nav-profile"><a href="/profile/" class="menu-item">Voir profil</a></li>
+                                <li class="scroll-to-section nav-signout"><a href="/signout/" class="menu-item">Sign Out</a></li>
+                            {% endif %}
                         </ul>
 
                         <div class="auth-btns">
-                            <a href="/signin/" class="signin-btn">Sign In</a>
-                            <a href="/signup/" class="signup-btn">Sign Up</a>
+                            {% if user.is_authenticated %}
+                                <div class="profile-menu">
+                                    <button type="button" class="profile-toggle" aria-label="Open profile menu">
+                                        {% if user.userprofile.profile_image %}
+                                            <img src="{{ user.userprofile.profile_image.url }}" alt="Profile" class="profile-avatar">
+                                        {% else %}
+                                            <img src="{% static 'assets/images/testimonial-author-1.png' %}" alt="Profile" class="profile-avatar">
+                                        {% endif %}
+                                        <span class="profile-name">{{ user.first_name|default:user.username }}</span>
+                                    </button>
+                                    <div class="profile-dropdown">
+                                        <a href="/profile/">Voir profil</a>
+                                        <a href="/signout/">Sign Out</a>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <a href="/signin/" class="signin-btn">Sign In</a>
+                                <a href="/signup/" class="signup-btn">Sign Up</a>
+                            {% endif %}
                         </div>
 
                         <a class='menu-trigger'>

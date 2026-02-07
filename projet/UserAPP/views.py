@@ -7,7 +7,7 @@ from pathlib import Path
 from PIL import Image
 
 from django.conf import settings
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, redirect
@@ -25,7 +25,7 @@ from speech_to_text_vosk_web import convert_to_wav, transcribe_file, wav_has_aud
 
 
 def home(request):
-    return render(request, "home.html")
+    return render(request, "index.html")
 
 
 def transcribe(request):
@@ -119,31 +119,46 @@ def show_avatar(request):
 def signin(request):
     context = {"error": ""}
     if request.method == "POST":
-        email_or_username = request.POST.get("email", "").strip()
+        email_or_username_raw = request.POST.get("email", "").strip()
+        email_or_username = email_or_username_raw.lower()
         password = request.POST.get("password", "")
 
         user = authenticate(request, username=email_or_username, password=password)
         if user is None:
-            try:
-                user_obj = User.objects.get(email=email_or_username)
+            user_obj = User.objects.filter(email__iexact=email_or_username_raw).first()
+            if user_obj is None:
+                user_obj = User.objects.filter(username__iexact=email_or_username_raw).first()
+            if user_obj is not None:
                 user = authenticate(request, username=user_obj.username, password=password)
-            except User.DoesNotExist:
-                user = None
 
         if user is None:
             context["error"] = "Invalid credentials."
         else:
-            return redirect("/signin/")
+            login(request, user)
+            return redirect("/")
 
     return render(request, "signin.html", context)
+
+
+def signout(request):
+    logout(request)
+    return redirect("/")
+
+
+def profile(request):
+    if not request.user.is_authenticated:
+        return redirect("/signin/")
+    profile_data = UserProfile.objects.filter(user=request.user).first()
+    return render(request, "profile.html", {"profile": profile_data})
 
 
 def signup(request):
     context = {"error": ""}
     if request.method == "POST":
         full_name = request.POST.get("full_name", "").strip()
-        email = request.POST.get("email", "").strip()
+        email = request.POST.get("email", "").strip().lower()
         phone = request.POST.get("phone", "").strip()
+        profile_image = request.FILES.get("profile_image")
         birth_date = request.POST.get("birth_date", "").strip()
         has_disability = request.POST.get("has_disability") == "yes"
         disability_type = request.POST.get("disability_type", "").strip()
@@ -165,6 +180,7 @@ def signup(request):
             )
             UserProfile.objects.create(
                 user=user,
+                profile_image=profile_image,
                 phone=phone,
                 birth_date=birth_date,
                 has_disability=has_disability,

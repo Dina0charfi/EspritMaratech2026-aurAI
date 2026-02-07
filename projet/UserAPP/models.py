@@ -4,6 +4,7 @@ from django.db import models
 
 class UserProfile(models.Model):
 	user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+	profile_image = models.ImageField(upload_to="profile_images/", blank=True, null=True)
 	phone = models.CharField(max_length=30)
 	birth_date = models.DateField()
 	has_disability = models.BooleanField(default=False)

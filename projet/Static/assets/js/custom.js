@@ -78,11 +78,16 @@
 
 		//smoothscroll
 		$('.menu-item').on('click', function (e) {
-			e.preventDefault();
 			var athis = this;
-			var target = this.hash,
-				menu = target;
+			var target = this.hash;
+			if (!target || target.indexOf('#') !== 0) {
+				return;
+			}
 			var $target = $(target);
+			if (!$target.length) {
+				return;
+			}
+			e.preventDefault();
 
 			$('html, body').stop().animate({
 				'scrollTop': $target.offset().top
@@ -102,7 +107,14 @@
 			}
 			$('.menu-item').not('[href=""]').not('[href="javascript:;"]').each(function () {
 				var currLink = $(this);
-				var refElement = $(currLink.attr("href"));
+				var hash = this.hash || "";
+				if (!hash || hash.indexOf('#') !== 0) {
+					return;
+				}
+				var refElement = $(hash);
+				if (!refElement.length) {
+					return;
+				}
 
 				if (refElement.position().top <= scrollPos && refElement.position().top + refElement.height() > scrollPos) {
 					$('.menu-item').removeClass("active");
