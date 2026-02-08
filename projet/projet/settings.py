@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'UserAPP',
+
 ]
 
 MIDDLEWARE = [
@@ -119,3 +120,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR/ 'Static']
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+AUTH8_USER_MODEL = 'auth.User'
+
+
+WEBAUTHN_RP_NAME = "Tunisian Sign Language App"
+WEBAUTHN_RP_ID = "localhost"
+WEBAUTHN_ORIGIN = "http://127.0.0.1:8000"

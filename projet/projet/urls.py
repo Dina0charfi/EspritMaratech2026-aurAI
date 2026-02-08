@@ -24,7 +24,6 @@ from UserAPP import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('UserAPP.urls')),
-
 ]
 
 if settings.DEBUG:

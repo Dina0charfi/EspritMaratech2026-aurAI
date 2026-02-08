@@ -249,6 +249,17 @@
                         <div class="result-box">{{ text }}</div>
                         <h3 class="card-title" style="margin-top: 16px;">Latin Transliteration</h3>
                         <div class="result-box">{{ translit }}</div>
+                        {% if sign_images %}
+                            <h3 class="card-title" style="margin-top: 16px;">Sign Images</h3>
+                            <div class="sign-grid">
+                                {% for item in sign_images %}
+                                    <div class="sign-card">
+                                        <img src="{{ item.image }}" alt="Sign for {{ item.word }}">
+                                        <div class="pill">{{ item.word }}</div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                         <p style="color:red; margin-top: 12px;">{{ error }}</p>
                     </div>
                     <div style="display:flex; gap:20px; justify-content:center; align-items:center; flex-wrap: wrap; margin-top: 16px;">

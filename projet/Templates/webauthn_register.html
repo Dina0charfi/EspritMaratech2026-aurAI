@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Register Face ID{% endblock %}
+
+{% block css %}
+<style>
+    .webauthn-page {
+        padding-top: 150px;
+        padding-bottom: 90px;
+        background: radial-gradient(900px 400px at 10% -10%, #ffe1c4 0%, transparent 60%),
+                    radial-gradient(800px 420px at 90% 0%, #d9fff7 0%, transparent 55%),
+                    linear-gradient(180deg, #fffaf4 0%, #ffffff 100%);
+    }
+
+    .webauthn-card {
+        background: rgba(255, 255, 255, 0.94);
+        border-radius: 22px;
+        padding: 30px;
+        border: 1px solid rgba(16, 18, 26, 0.12);
+        box-shadow: 0 24px 50px rgba(16, 18, 26, 0.12);
+        backdrop-filter: blur(10px);
+        text-align: center;
+    }
+
+    .webauthn-title {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .webauthn-sub {
+        color: rgba(16, 18, 26, 0.7);
+        margin-bottom: 18px;
+    }
+
+    .webauthn-btn {
+        background: #f4511e;
+        color: #ffffff;
+        border: 0;
+        border-radius: 12px;
+        padding: 10px 16px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .webauthn-link {
+        display: inline-block;
+        margin-top: 12px;
+        color: #f4511e;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .webauthn-message {
+        margin-top: 14px;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="webauthn-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-5 offset-lg-3">
+                <div class="webauthn-card">
+                    <h1 class="webauthn-title">Register Face ID</h1>
+                    <p class="webauthn-sub">Secure your account with Face ID or a security key.</p>
+                    <button id="registerFaceId" class="webauthn-btn">Register Face ID</button>
+                    <div id="webauthnMessage" class="webauthn-message"></div>
+                    <a href="/profile/" class="webauthn-link">Back to profile</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+    }
+
+    function bufferToBase64url(buffer) {
+        const bytes = new Uint8Array(buffer);
+        let binary = "";
+        bytes.forEach((b) => binary += String.fromCharCode(b));
+        return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+    }
+
+    function base64urlToBuffer(value) {
+        const base64 = value.replace(/-/g, "+").replace(/_/g, "/");
+        const pad = base64.length % 4 ? "=".repeat(4 - (base64.length % 4)) : "";
+        const binary = atob(base64 + pad);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+        return bytes.buffer;
+    }
+
+    const messageEl = document.getElementById("webauthnMessage");
+    const registerBtn = document.getElementById("registerFaceId");
+
+    if (registerBtn) {
+        registerBtn.addEventListener("click", async () => {
+            messageEl.textContent = "";
+            try {
+                const csrfToken = getCookie("csrftoken");
+                const optionsRes = await fetch("/webauthn/register/options/", {
+                    method: "POST",
+                    credentials: "same-origin",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": csrfToken
+                    },
+                    body: JSON.stringify({})
+                });
+                const options = await optionsRes.json();
+                if (options.error) {
+                    messageEl.textContent = options.error;
+                    messageEl.style.color = "#b00020";
+                    return;
+                }
+
+                options.challenge = base64urlToBuffer(options.challenge);
+                options.user.id = base64urlToBuffer(options.user.id);
+                if (options.excludeCredentials) {
+                    options.excludeCredentials = options.excludeCredentials.map((cred) => ({
+                        ...cred,
+                        id: base64urlToBuffer(cred.id)
+                    }));
+                }
+
+                const credential = await navigator.credentials.create({ publicKey: options });
+                if (!credential) {
+                    throw new Error("No credential returned.");
+                }
+
+                const attestation = {
+                    id: credential.id,
+                    rawId: bufferToBase64url(credential.rawId),
+                    type: credential.type,
+                    response: {
+                        clientDataJSON: bufferToBase64url(credential.response.clientDataJSON),
+                        attestationObject: bufferToBase64url(credential.response.attestationObject)
+                    }
+                };
+
+                const verifyRes = await fetch("/webauthn/register/verify/", {
+                    method: "POST",
+                    credentials: "same-origin",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": csrfToken
+                    },
+                    body: JSON.stringify(attestation)
+                });
+                const verify = await verifyRes.json();
+                if (verify.error) {
+                    messageEl.textContent = verify.error;
+                    messageEl.style.color = "#b00020";
+                    return;
+                }
+
+                messageEl.textContent = "Face ID registered successfully.";
+                messageEl.style.color = "#0b6b3a";
+            } catch (err) {
+                messageEl.textContent = err.message || "Registration failed.";
+                messageEl.style.color = "#b00020";
+            }
+        });
+    }
+</script>
+{% endblock %}

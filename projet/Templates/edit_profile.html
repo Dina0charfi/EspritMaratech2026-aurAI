@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block css %}
+<style>
+    .edit-page {
+        padding-top: 150px;
+        padding-bottom: 90px;
+        background: radial-gradient(900px 400px at 10% -10%, #ffe1c4 0%, transparent 60%),
+                    radial-gradient(800px 420px at 90% 0%, #d9fff7 0%, transparent 55%),
+                    linear-gradient(180deg, #fffaf4 0%, #ffffff 100%);
+    }
+
+    .edit-card {
+        background: rgba(255, 255, 255, 0.94);
+        border-radius: 22px;
+        padding: 30px;
+        border: 1px solid rgba(16, 18, 26, 0.12);
+        box-shadow: 0 24px 50px rgba(16, 18, 26, 0.12);
+        backdrop-filter: blur(10px);
+    }
+
+    .edit-title {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .edit-sub {
+        color: rgba(16, 18, 26, 0.7);
+        margin-bottom: 18px;
+    }
+
+    .edit-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px 16px;
+    }
+
+    .edit-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .edit-label {
+        font-weight: 600;
+        font-size: 13px;
+        color: rgba(16, 18, 26, 0.7);
+    }
+
+    .edit-input {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(16, 18, 26, 0.12);
+        background: rgba(255, 255, 255, 0.95);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .edit-input:focus {
+        outline: none;
+        border-color: #f4511e;
+        box-shadow: 0 0 0 4px rgba(244, 81, 30, 0.15);
+    }
+
+    .edit-avatar {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid rgba(244, 81, 30, 0.2);
+        background: #ffffff;
+        box-shadow: 0 12px 24px rgba(16, 18, 26, 0.12);
+    }
+
+    .edit-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 14px;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .edit-btn {
+        background: #f4511e;
+        color: #ffffff;
+        border: 0;
+        border-radius: 12px;
+        padding: 10px 16px;
+        font-weight: 600;
+    }
+
+    .edit-link {
+        color: #f4511e;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+        .edit-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="edit-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 offset-lg-3">
+                <div class="edit-card">
+                    <h1 class="edit-title">Edit Profile</h1>
+                    <p class="edit-sub">Update your personal details and profile photo.</p>
+
+                    {% if error %}
+                        <div style="color:#b00020; margin-bottom: 12px; font-weight: 600;">{{ error }}</div>
+                    {% endif %}
+                    {% if success %}
+                        <div style="color:#0b6b3a; margin-bottom: 12px; font-weight: 600;">{{ success }}</div>
+                    {% endif %}
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="edit-grid">
+                            <div class="edit-field">
+                                <label class="edit-label" for="full_name">Full name</label>
+                                <input type="text" id="full_name" name="full_name" class="edit-input" value="{{ user.first_name|default:user.username }}" required>
+                            </div>
+                            <div class="edit-field">
+                                <label class="edit-label" for="email">Email</label>
+                                <input type="email" id="email" name="email" class="edit-input" value="{{ user.email }}" required>
+                            </div>
+                            <div class="edit-field">
+                                <label class="edit-label" for="phone">Phone</label>
+                                <input type="tel" id="phone" name="phone" class="edit-input" value="{{ profile.phone|default:"" }}" required>
+                            </div>
+                            <div class="edit-field">
+                                <label class="edit-label" for="birth_date">Date of birth</label>
+                                <input type="date" id="birth_date" name="birth_date" class="edit-input" value="{{ profile.birth_date|date:"Y-m-d" }}" required>
+                            </div>
+                            <div class="edit-field">
+                                <label class="edit-label" for="has_disability">Disability</label>
+                                <select id="has_disability" name="has_disability" class="edit-input" required>
+                                    <option value="" disabled {% if profile.has_disability == None %}selected{% endif %}>Do you have a disability?</option>
+                                    <option value="yes" {% if profile.has_disability %}selected{% endif %}>Yes</option>
+                                    <option value="no" {% if profile.has_disability == False %}selected{% endif %}>No</option>
+                                </select>
+                            </div>
+                            <div class="edit-field" id="disability-type-field">
+                                <label class="edit-label" for="disability_type">Disability type</label>
+                                <input type="text" id="disability_type" name="disability_type" class="edit-input" value="{{ profile.disability_type|default:"" }}" placeholder="Disability type (if yes)">
+                            </div>
+                            <div class="edit-field">
+                                <label class="edit-label" for="profile_image">Profile photo</label>
+                                <input type="file" id="profile_image" name="profile_image" class="edit-input" accept="image/*">
+                            </div>
+                            <div class="edit-field">
+                                <label class="edit-label">Current photo</label>
+                                {% if profile.profile_image %}
+                                    <img src="{{ profile.profile_image.url }}" alt="Profile" class="edit-avatar">
+                                {% else %}
+                                    <img src="{% static 'assets/images/testimonial-author-1.png' %}" alt="Profile" class="edit-avatar">
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="edit-actions">
+                            <button type="submit" class="edit-btn">Save changes</button>
+                            <a href="/profile/" class="edit-link">Back to profile</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const disabilitySelect = document.getElementById('has_disability');
+    const disabilityField = document.getElementById('disability-type-field');
+
+    function toggleDisabilityField() {
+        const show = disabilitySelect && disabilitySelect.value === 'yes';
+        disabilityField.style.display = show ? 'flex' : 'none';
+    }
+
+    if (disabilitySelect && disabilityField) {
+        toggleDisabilityField();
+        disabilitySelect.addEventListener('change', toggleDisabilityField);
+    }
+</script>
+{% endblock %}

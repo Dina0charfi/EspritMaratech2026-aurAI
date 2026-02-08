@@ -5,87 +5,156 @@
 
 {% block css %}
 <style>
-    .auth-page {
-        padding-top: 140px;
-        padding-bottom: 80px;
-    }
-
-    .auth-card {
-        background: rgba(255, 255, 255, 0.9);
-        border-radius: 20px;
-        padding: 28px;
-        border: 1px solid rgba(16, 18, 26, 0.12);
-        box-shadow: 0 18px 40px rgba(16, 18, 26, 0.12);
-    }
-
-    .auth-title {
-        font-size: 28px;
-        font-weight: 700;
-        margin-bottom: 10px;
-    }
-
-    .auth-sub {
-        color: rgba(16, 18, 26, 0.7);
-        margin-bottom: 20px;
-    }
-
-    .auth-input {
-        width: 100%;
-        padding: 10px 12px;
-        border-radius: 12px;
-        border: 1px solid rgba(16, 18, 26, 0.12);
-        margin-bottom: 12px;
-    }
-
-    .auth-actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 10px;
-        gap: 12px;
-        flex-wrap: wrap;
-    }
-
-    .auth-btn {
-        background: #f4511e;
-        color: #ffffff;
-        border: 0;
-        border-radius: 12px;
-        padding: 10px 16px;
-        font-weight: 600;
-    }
-
-    .auth-link {
-        color: #f4511e;
-        text-decoration: none;
-        font-weight: 600;
-    }
+.auth-page { padding-top: 140px; padding-bottom: 80px; }
+.auth-card { background: rgba(255,255,255,0.9); border-radius: 20px; padding: 28px; border:1px solid rgba(16,18,26,0.12); box-shadow:0 18px 40px rgba(16,18,26,0.12);}
+.auth-title { font-size:28px; font-weight:700; margin-bottom:10px;}
+.auth-sub { color: rgba(16,18,26,0.7); margin-bottom:20px;}
+.auth-input { width:100%; padding:10px 12px; border-radius:12px; border:1px solid rgba(16,18,26,0.12); margin-bottom:12px;}
+.auth-actions { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-top:10px;}
+.auth-btn { background:#f4511e; color:#fff; border:0; border-radius:12px; padding:10px 16px; font-weight:600;}
+.auth-link { color:#f4511e; text-decoration:none; font-weight:600;}
 </style>
 {% endblock %}
 
 {% block content %}
 <section class="auth-page">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-5 offset-lg-3">
-                <div class="auth-card">
-                    <h1 class="auth-title">Sign In</h1>
-                    <p class="auth-sub">Sign in to access Tunisian Sign Language tools.</p>
-                    {% if error %}
-                        <div style="color:#b00020; margin-bottom: 12px; font-weight: 600;">{{ error }}</div>
-                    {% endif %}
-                    <form method="post">
-                        {% csrf_token %}
-                        <input type="email" name="email" class="auth-input" placeholder="Email address" required>
-                        <input type="password" name="password" class="auth-input" placeholder="Password" required>
-                        <div class="auth-actions">
-                            <button type="submit" class="auth-btn">Sign In</button>
-                            <a href="/signup/" class="auth-link">Create an account</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="container">
+<div class="row">
+<div class="col-lg-5 offset-lg-3">
+<div class="auth-card">
+<h1 class="auth-title">Sign In</h1>
+<p class="auth-sub">Sign in to access Tunisian Sign Language tools.</p>
+
+{% if error %}
+  <div style="color:#b00020; margin-bottom:12px; font-weight:600;">{{ error }}</div>
+{% endif %}
+
+<form method="post">
+  {% csrf_token %}
+  <input type="email" name="email" class="auth-input" placeholder="Email address" required>
+  <input type="password" name="password" class="auth-input" placeholder="Password" required>
+  <div class="auth-actions">
+    <button type="submit" class="auth-btn">Sign In</button>
+    <a href="/signup/" class="auth-link">Create an account</a>
+  </div>
+</form>
+
+<hr style="margin:20px 0;">
+
+<button type="button" id="faceIdLogin" class="auth-btn" style="background:#0f7c7f;">Login with Face ID</button>
+<div id="faceIdMessage" style="margin-top:10px; font-weight:600;"></div>
+
+</div>
+</div>
+</div>
+</div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+    }
+
+    function bufferToBase64url(buffer) {
+        const bytes = new Uint8Array(buffer);
+        let binary = "";
+        bytes.forEach((b) => binary += String.fromCharCode(b));
+        return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+    }
+
+    function base64urlToBuffer(value) {
+        const base64 = value.replace(/-/g, "+").replace(/_/g, "/");
+        const pad = base64.length % 4 ? "=".repeat(4 - (base64.length % 4)) : "";
+        const binary = atob(base64 + pad);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+        return bytes.buffer;
+    }
+
+    const faceBtn = document.getElementById("faceIdLogin");
+    const faceMsg = document.getElementById("faceIdMessage");
+
+    if (faceBtn) {
+        faceBtn.addEventListener("click", async () => {
+            faceMsg.textContent = "";
+            const emailField = document.querySelector("input[name='email']");
+            const email = emailField ? emailField.value.trim() : "";
+            if (!email) {
+                faceMsg.textContent = "Enter your email first.";
+                faceMsg.style.color = "#b00020";
+                return;
+            }
+
+            try {
+                const csrfToken = getCookie("csrftoken");
+                const optionsRes = await fetch("/webauthn/authenticate/options/", {
+                    method: "POST",
+                    credentials: "same-origin",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": csrfToken
+                    },
+                    body: JSON.stringify({ email })
+                });
+                const options = await optionsRes.json();
+                if (options.error) {
+                    faceMsg.textContent = options.error;
+                    faceMsg.style.color = "#b00020";
+                    return;
+                }
+
+                options.challenge = base64urlToBuffer(options.challenge);
+                if (options.allowCredentials) {
+                    options.allowCredentials = options.allowCredentials.map((cred) => ({
+                        ...cred,
+                        id: base64urlToBuffer(cred.id)
+                    }));
+                }
+
+                const assertion = await navigator.credentials.get({ publicKey: options });
+                if (!assertion) {
+                    throw new Error("No credential returned.");
+                }
+
+                const payload = {
+                    id: assertion.id,
+                    rawId: bufferToBase64url(assertion.rawId),
+                    type: assertion.type,
+                    response: {
+                        clientDataJSON: bufferToBase64url(assertion.response.clientDataJSON),
+                        authenticatorData: bufferToBase64url(assertion.response.authenticatorData),
+                        signature: bufferToBase64url(assertion.response.signature),
+                        userHandle: assertion.response.userHandle ? bufferToBase64url(assertion.response.userHandle) : null
+                    }
+                };
+
+                const verifyRes = await fetch("/webauthn/authenticate/verify/", {
+                    method: "POST",
+                    credentials: "same-origin",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": csrfToken
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const verify = await verifyRes.json();
+                if (verify.error) {
+                    faceMsg.textContent = verify.error;
+                    faceMsg.style.color = "#b00020";
+                    return;
+                }
+
+                window.location.href = "/";
+            } catch (err) {
+                faceMsg.textContent = err.message || "Face ID login failed.";
+                faceMsg.style.color = "#b00020";
+            }
+        });
+    }
+</script>
 {% endblock %}

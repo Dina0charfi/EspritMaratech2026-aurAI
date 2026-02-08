@@ -35,6 +35,37 @@ https://templatemo.com/tm-540-lava-landing-page
             font-family: 'Poppins', sans-serif;
         }
 
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 16px;
+            background: #10121a;
+            color: #ffffff;
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-weight: 600;
+            z-index: 9999;
+            text-decoration: none;
+            transition: top 0.2s ease;
+        }
+
+        .skip-link:focus {
+            top: 16px;
+            outline: 3px solid rgba(244, 81, 30, 0.5);
+            outline-offset: 2px;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
         .main-nav { position: relative; }
         .auth-btns {
             position: absolute;
@@ -62,6 +93,11 @@ https://templatemo.com/tm-540-lava-landing-page
             background: #ffffff;
             color: #f4511e;
             border: 1px solid #f4511e;
+        }
+
+        .signup-btn:hover,
+        .signin-btn:hover {
+            color: #10121a;
         }
 
         .profile-menu {
@@ -143,7 +179,7 @@ https://templatemo.com/tm-540-lava-landing-page
 
         .profile-dropdown a:hover {
             background: rgba(244, 81, 30, 0.12);
-            color: #f4511e;
+            color: #10121a;
         }
 
         .nav-signout {
@@ -154,15 +190,53 @@ https://templatemo.com/tm-540-lava-landing-page
             display: none;
         }
 
+        .nav-signout .menu-item:hover,
+        .nav-profile .menu-item:hover {
+            color: #10121a;
+        }
+
 
         .footer-select,
         .footer-select:focus {
             width: 100%;
             border: 0;
             padding: 12px 18px;
-            background-color: rgba(250, 250, 250, 0.3);
+            background-color: #ffffff;
             border-radius: 6px;
             outline: none;
+        }
+
+        .contact-form {
+            color: #10121a;
+        }
+
+        .contact-form input,
+        .contact-form textarea,
+        .footer-select {
+            color: #1d1a14;
+            background-color: #ffffff;
+            border: 1px solid rgba(16, 18, 26, 0.2);
+        }
+
+        .contact-form input::placeholder,
+        .contact-form textarea::placeholder {
+            color: rgba(29, 26, 20, 0.8);
+        }
+
+        .contact-form input:focus,
+        .contact-form textarea:focus,
+        .footer-select:focus {
+            border-color: #c44716;
+            box-shadow: 0 0 0 3px rgba(196, 71, 22, 0.2);
+        }
+
+        #form-submit.main-button {
+            background: #c44716;
+            color: #ffffff;
+        }
+
+        #form-submit.main-button:hover {
+            background: #a43b12;
         }
 
         @media (max-width: 767px) {
@@ -188,6 +262,7 @@ https://templatemo.com/tm-540-lava-landing-page
 
 </head>
 <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
     <header class="header-area header-sticky">
         <div class="container">
             <div class="row">
@@ -237,9 +312,11 @@ https://templatemo.com/tm-540-lava-landing-page
             </div>
         </div>
     </header>
-    {% block content %}
-    
-    {% endblock %}
+    <main id="main-content" role="main">
+        {% block content %}
+        
+        {% endblock %}
+    </main>
 
      <!-- ***** Footer Start ***** -->
     <footer id="contact-us">
@@ -261,19 +338,22 @@ https://templatemo.com/tm-540-lava-landing-page
                                 <div class="row">
                                     <div class="col-md-6 col-sm-12">
                                         <fieldset>
+                                            <label class="sr-only" for="name">Full name</label>
                                             <input name="name" type="text" id="name" placeholder="Full name" required=""
                                                 style="background-color: rgba(250,250,250,0.3);">
                                         </fieldset>
                                     </div>
                                     <div class="col-md-6 col-sm-12">
                                         <fieldset>
+                                            <label class="sr-only" for="email">Email address</label>
                                             <input name="email" type="text" id="email" placeholder="Email address"
                                                 required="" style="background-color: rgba(250,250,250,0.3);">
                                         </fieldset>
                                     </div>
                                     <div class="col-lg-12">
                                         <fieldset>
-                                            <select name="category" id="category" class="footer-select" required="">
+                                            <label class="sr-only" for="category">Message type</label>
+                                            <select name="category" id="category" class="footer-select" required="" aria-label="Message type">
                                                 <option value="" disabled selected>Message type</option>
                                                 <option value="recommendation">Recommendation</option>
                                                 <option value="alert">Alert</option>
@@ -283,6 +363,7 @@ https://templatemo.com/tm-540-lava-landing-page
                                     </div>
                                     <div class="col-lg-12">
                                         <fieldset>
+                                            <label class="sr-only" for="message">Your message</label>
                                             <textarea name="message" rows="6" id="message" placeholder="Your message"
                                                 required="" style="background-color: rgba(250,250,250,0.3);"></textarea>
                                         </fieldset>
@@ -303,11 +384,11 @@ https://templatemo.com/tm-540-lava-landing-page
                             and display signs to support communication and learning.
                             <br><br>To contact us or share an idea, use this form.</p>
                         <ul class="social">
-                            <li><a href="https://fb.com/templatemo"><i class="fa fa-facebook"></i></a></li>
-                            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                            <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                            <li><a href="#"><i class="fa fa-rss"></i></a></li>
-                            <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                            <li><a href="#" aria-label="Facebook"><i class="fa fa-facebook"></i><span class="sr-only">Facebook</span></a></li>
+                            <li><a href="#" aria-label="Twitter"><i class="fa fa-twitter"></i><span class="sr-only">Twitter</span></a></li>
+                            <li><a href="#" aria-label="LinkedIn"><i class="fa fa-linkedin"></i><span class="sr-only">LinkedIn</span></a></li>
+                            <li><a href="#" aria-label="RSS"><i class="fa fa-rss"></i><span class="sr-only">RSS</span></a></li>
+                            <li><a href="#" aria-label="Dribbble"><i class="fa fa-dribbble"></i><span class="sr-only">Dribbble</span></a></li>
                         </ul>
                     </div>
                 </div>
@@ -317,7 +398,7 @@ https://templatemo.com/tm-540-lava-landing-page
                     <div class="sub-footer">
                         <p>Copyright &copy; 2026 Voice-to-Sign TSL
 
-                        | Designed by <a rel="nofollow" href="https://templatemo.com">TemplateMo</a></p>
+                        | Designed by <a rel="nofollow" href="https://templatemo.com">AurAI</a></p>
                     </div>
                 </div>
             </div>
