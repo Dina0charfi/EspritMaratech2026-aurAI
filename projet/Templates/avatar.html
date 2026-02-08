@@ -1,75 +1,515 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>3D Avatar</title>
-    <style>
-        body { margin: 0; overflow: hidden; }
-        #avatar-container { width: 100%; height: 500px; }
-    </style>
-</head>
-<body>
-<main id="main-content" role="main">
-    <div id="avatar-container"></div>
-</main>
+
+{% block title %}Sign Avatar AI{% endblock %}
+{% block css %}
+<style>
+    /* Styling matched with Transcribe page */
+    :root {
+        --ink: #1b1b1f;
+        --muted: #525866;
+        --paper: #f8f5ef;
+        --accent: #e86a17;
+        --accent-2: #1f7a6f;
+        --accent-3: #f0b27a;
+        --stroke: rgba(27, 27, 31, 0.12);
+        --card: rgba(255, 255, 255, 0.86);
+        --shadow: 0 24px 60px rgba(16, 18, 26, 0.18);
+    }
+    
+    body {
+        /* Matches transcribe.html background */
+        background:
+            radial-gradient(1200px 500px at 5% -10%, #f7e2c8 0%, transparent 60%),
+            radial-gradient(900px 460px at 100% 0%, #d8efe8 0%, transparent 55%),
+            var(--paper);
+        color: var(--ink);
+    }
+
+    .avatar-page {
+        padding-top: 140px;
+        padding-bottom: 60px;
+        min-height: 100vh;
+    }
+
+    .hero-title {
+        font-size: clamp(28px, 4vw, 40px);
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .glass-card {
+        background: var(--card);
+        border: 1px solid var(--stroke);
+        border-radius: 24px;
+        padding: 26px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(12px);
+        margin-bottom: 30px;
+        border: 1px solid rgba(255,255,255,0.4);
+    }
+
+    /* Input & Controls */
+    .controls-area {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+    }
+
+    .input-field {
+        background: rgba(255,255,255,0.9);
+        border: 2px solid var(--stroke);
+        color: var(--ink);
+        padding: 12px 24px;
+        border-radius: 14px;
+        width: 100%;
+        max-width: 400px;
+        font-size: 16px;
+        outline: none;
+        transition: all 0.3s;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .input-field:focus {
+        border-color: var(--accent);
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(232, 106, 23, 0.1);
+    }
+
+    .main-button {
+        outline: none;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        border-radius: 25px;
+        padding: 15px 25px;
+        background-color: #f4813f; /* TemplateMo Orange */
+        text-transform: uppercase;
+        color: #fff;
+        font-weight: 600;
+        letter-spacing: 1px;
+        transition: all 0.3s ease 0s;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow: none;
+    }
+    .main-button:hover {
+        background-color: #f1556a; /* TemplateMo Red/Pink Hover */
+        transform: none;
+        box-shadow: none;
+    }
+    .main-button:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+    
+    .main-button i {
+        font-size: 14px;
+    }
+
+    /* 3D Container */
+    #avatar-container {
+        width: 100%;
+        height: 500px;
+        border-radius: 20px;
+        overflow: hidden;
+        background: linear-gradient(180deg, #e0e0e0 0%, #cfcfcf 100%);
+        position: relative;
+        box-shadow: inset 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    #status {
+        text-align: center;
+        color: var(--muted);
+        font-weight: 600;
+        margin-bottom: 20px;
+        min-height: 24px;
+        letter-spacing: 0.5px;
+    }
+
+    #video-debug {
+        background: #111;
+        color: #0f0;
+        font-family: 'Consolas', monospace;
+        padding: 15px;
+        height: 120px;
+        overflow-y: auto;
+        border-radius: 12px;
+        margin-top: 20px;
+        font-size: 11px;
+        display: none;
+        border: 1px solid #333;
+    }
+    
+    /* Loading Spinner for button */
+    .spinner {
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top: 3px solid #fff;
+      width: 16px;
+      height: 16px;
+      -webkit-animation: spin 1s linear infinite; /* Safari */
+      animation: spin 1s linear infinite;
+      display: none;
+    }
+    
+    .main-button.loading .spinner {
+        display: block;
+    }
+    .main-button.loading span, 
+    .main-button.loading i {
+        display: none;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="test-monial" id="avatar-page">
+<!-- Use common structure from base/transcribe template -->
+<div class="container avatar-page">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <h1 class="hero-title">Sign Language Avatar</h1>
+            
+            <div class="glass-card">
+                <div id="status">Ready to Translate</div>
+
+                <div class="controls-area">
+                    <input type="text" id="wordInput" class="input-field" placeholder="Type a word in French (e.g. bonjour)..." />
+                    <button id="playBtn" class="main-button">
+                        <span>Play Sign</span>
+                        <div class="spinner"></div>
+                        <i class="fa fa-play"></i>
+                    </button>
+                </div>
+
+                <div id="avatar-container"></div>
+                <div id="video-debug"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Import Map for correct Three.js modular loading with local static files -->
+<script type="importmap">
+    {
+        "imports": {
+            "three": "{% static 'assets/js/three/three.module.js' %}"
+        }
+    }
+</script>
 
 <script type="module">
-    // Import depuis CDN
-    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.module.js';
-    import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.155.0/examples/jsm/loaders/GLTFLoader.js';
+    import * as THREE from 'three';
+    import { GLTFLoader } from "{% static 'assets/js/three/GLTFLoader.js' %}";
+    import { OrbitControls } from "{% static 'assets/js/three/OrbitControls.js' %}";
 
-    const container = document.getElementById('avatar-container');
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xf2f2f2);
+    // Debug Logger
+    function log(msg) {
+        const debug = document.getElementById('video-debug');
+        if (msg.includes("ERROR")) debug.style.display = 'block';
+        const line = document.createElement('div');
+        line.textContent = `> ${msg}`;
+        debug.appendChild(line);
+        debug.scrollTop = debug.scrollHeight;
+    }
+    window.onerror = function(msg, url, line) {
+        // log(`ERROR: ${msg} (${line})`);
+        return false;
+    };
 
-    const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    container.appendChild(renderer.domElement);
+    // Constants
+    const MODEL_PATH = "{% static 'avatars/business_man.glb' %}"; 
+    
+    // State
+    let scene, camera, renderer, model;
+    let boneRegistry = {};
+    let animationInterval = null;
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(0, 1, 1);
-    scene.add(ambientLight, directionalLight);
+    // Bone Map (Exactly matching React App)
+    const boneMap = {
+            "RightArm": ["UpperArm.R", "mixamorig:RightArm", "RightArm", "RightUpperArm", "R_Arm", "Right_Arm"],
+            "LeftArm": ["UpperArm.L", "mixamorig:LeftArm", "LeftArm", "LeftUpperArm", "L_Arm", "Left_Arm"],
+            "RightForeArm": ["LowerArm.R", "mixamorig:RightForeArm", "RightForeArm", "RightLowerArm", "R_ForeArm", "Right_ForeArm"],
+            "LeftForeArm": ["LowerArm.L", "mixamorig:LeftForeArm", "LeftForeArm", "LeftLowerArm", "L_ForeArm", "Left_ForeArm"],
+            "RightHand": ["Wrist.R", "mixamorig:RightHand", "RightHand", "RightWrist", "R_Hand", "Right_Hand"],
+            "LeftHand": ["Wrist.L", "mixamorig:LeftHand", "LeftHand", "LeftWrist", "L_Hand", "Left_Hand"],
+            "Head": ["Head", "mixamorig:Head", "CC_Base_Head"],
+            "Neck": ["Neck", "mixamorig:Neck", "CC_Base_Neck"],
+            "Spine": ["Torso", "mixamorig:Spine", "Spine", "Spine1", "Spine01"], 
+            "Hips": ["Hips", "mixamorig:Hips", "Pelvis", "Root"],
+            "RightUpLeg": ["UpperLeg.R", "mixamorig:RightUpLeg", "RightUpLeg", "RightThigh", "R_UpLeg"], 
+            "RightLeg": ["LowerLeg.R", "mixamorig:RightLeg", "RightLeg", "RightCalf", "R_Leg"], 
+            "LeftUpLeg": ["UpperLeg.L", "mixamorig:LeftUpLeg", "LeftUpLeg", "LeftThigh", "L_UpLeg"], 
+            "LeftLeg": ["LowerLeg.L", "mixamorig:LeftLeg", "LeftLeg", "LeftCalf", "L_Leg"],
+    };
 
-    const loader = new GLTFLoader();
-    loader.load("{% static 'avatars/Animated_Woman.glb' %}", function(gltf) {
-        const model = gltf.scene;
-        scene.add(model);
+    function init() {
+        const container = document.getElementById('avatar-container');
+        
+        // Scene
+        scene = new THREE.Scene();
+        // Set background to a neutral grey that matches the canvas background CSS
+        scene.background = new THREE.Color(0xe0e0e0); 
+        scene.fog = new THREE.Fog(0xe0e0e0, 5, 20); // softer fog
 
-        const box = new THREE.Box3().setFromObject(model);
-        const center = box.getCenter(new THREE.Vector3());
-        model.position.sub(center);
 
-        const size = box.getSize(new THREE.Vector3());
-        const maxDim = Math.max(size.x, size.y, size.z);
-        const safeDim = maxDim > 0 ? maxDim : 2;
-        const fov = camera.fov * (Math.PI / 180);
-        let cameraZ = Math.abs(safeDim / 2 / Math.tan(fov / 2)) * 1.6;
-        camera.position.set(0, 0, cameraZ);
+        // Camera
+        camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 100);
+        camera.position.set(0, 1.4, 2.5); // Slightly closer for better view
 
-        camera.near = safeDim / 100;
-        camera.far = safeDim * 100;
-        camera.updateProjectionMatrix();
+        // Renderer
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Softer shadows
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        container.appendChild(renderer.domElement);
 
-    }, undefined, function(error){
-        console.error('GLB load error:', error);
-        container.innerHTML = '<div style="padding:12px;color:red;">Error: unable to load Animated_Woman.glb</div>';
-    });
+        // Lights
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.2);
+        hemiLight.position.set(0, 20, 0);
+        scene.add(hemiLight);
 
-    window.addEventListener('resize', () => {
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+        dirLight.position.set(3, 10, 10);
+        dirLight.castShadow = true;
+        dirLight.shadow.mapSize.width = 1024;
+        dirLight.shadow.mapSize.height = 1024;
+        scene.add(dirLight);
+
+        // Point Light for Fill
+        const pointLight = new THREE.PointLight(0xffffff, 0.5);
+        pointLight.position.set(-2, 3, 2);
+        scene.add(pointLight);
+
+        // Controls
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.target.set(0, 1, 0);
+        controls.minDistance = 1;
+        controls.maxDistance = 4;
+        controls.enablePan = false;
+        controls.update();
+
+        // Floor - Infinite grid look
+        const planeGeo = new THREE.PlaneGeometry(100, 100);
+        const planeMat = new THREE.ShadowMaterial({ opacity: 0.2 });
+        const plane = new THREE.Mesh(planeGeo, planeMat);
+        plane.rotation.x = -Math.PI / 2;
+        plane.position.y = -1;
+        plane.receiveShadow = true;
+        scene.add(plane);
+        
+        // Grid Helper
+        const grid = new THREE.GridHelper(20, 20, 0x888888, 0xcccccc);
+        grid.position.y = -1;
+        grid.material.opacity = 0.3;
+        grid.material.transparent = true;
+        scene.add(grid);
+
+        // Load Model
+        const loader = new GLTFLoader();
+        setStatus("Loading 3D Model...");
+        
+        loader.load(MODEL_PATH, (gltf) => {
+            model = gltf.scene;
+            scene.add(model);
+            
+            // Adjust to fit well in the view
+            model.position.set(0, -1, 0);
+            model.scale.set(1.8, 1.8, 1.8);
+
+            // Bone Registry & Shadows
+            model.traverse((child) => {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+                if (child.isBone) {
+                    boneRegistry[child.name] = child;
+                    const cleanName = child.name.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+                    boneRegistry[cleanName] = child;
+                }
+            });
+            
+            model.rotation.y = 0;
+            setStatus("Ready to Translate");
+        }, undefined, (error) => {
+            console.error(error);
+            log("Error loading model: " + error.message);
+            setStatus("Error: Could not load 3D Model");
+        });
+
+        window.addEventListener('resize', onWindowResize);
+        animate();
+    }
+
+    function onWindowResize() {
+        const container = document.getElementById('avatar-container');
+        if (!container) return;
         camera.aspect = container.clientWidth / container.clientHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(container.clientWidth, container.clientHeight);
-    });
+    }
 
     function animate() {
         requestAnimationFrame(animate);
+        
+        // Idle Animation (Breathing)
+        if (!animationInterval && model) {
+            const neck = findBone("Neck");
+            if (neck) {
+                const time = Date.now() * 0.001;
+                // Subtle breathing motion
+                neck.rotation.x = Math.sin(time * 1.5) * 0.05 + 0.1; // +0.1 to look slightly up/straight
+            }
+        }
+
         renderer.render(scene, camera);
     }
-    animate();
-</script>
 
-</body>
-</html>
+    // Helper to find bone
+    function findBone(name) {
+        if (boneRegistry[name]) return boneRegistry[name];
+        let targets = boneMap[name];
+        if (targets) {
+            if (!Array.isArray(targets)) targets = [targets];
+            for (const target of targets) {
+                if (boneRegistry[target]) return boneRegistry[target];
+                const cleanTarget = target.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+                if (boneRegistry[cleanTarget]) return boneRegistry[cleanTarget];
+            }
+        }
+        const cleanSearch = name.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+        if (boneRegistry[cleanSearch]) return boneRegistry[cleanSearch];
+
+        if (name === "RightWrist") return findBone("RightHand");
+        if (name === "LeftWrist") return findBone("LeftHand");
+        return null;
+    }
+
+    function applyPose(keypoints) {
+        if (!keypoints) return;
+        const damp = 0.5;
+
+        for (let boneName in keypoints) {
+            const bone = findBone(boneName);
+            if (bone) {
+                const { x, y, z, position } = keypoints[boneName];
+                
+                // Rotation
+                const targetEuler = new THREE.Euler(x, y, z);
+                const targetQuat = new THREE.Quaternion().setFromEuler(targetEuler);
+                bone.quaternion.slerp(targetQuat, damp);
+
+                // Position (Hips only)
+                if (position && boneName === "Hips") {
+                     const clampedX = Math.max(-1, Math.min(1, position.x));
+                     const clampedY = Math.max(-0.5, Math.min(0.5, position.y)); 
+                     const clampedZ = Math.max(-1, Math.min(1, position.z));
+                     
+                     // Adjust Y offset
+                     const targetPos = new THREE.Vector3(clampedX, clampedY + 0.9, clampedZ);
+                     bone.position.lerp(targetPos, damp);
+                }
+            }
+        }
+    }
+
+    // Play Logic
+    async function playAnimation(word) {
+        if (!word) return;
+        setStatus(`Translating: "${word}"...`);
+        const btn = document.getElementById('playBtn');
+        btn.disabled = true;
+        btn.classList.add('loading');
+
+        try {
+            const response = await fetch('/api/animation/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ word: word })
+            });
+
+            const data = await response.json();
+
+            if (!data || data.length === 0) {
+                setStatus(` Sign for "${word}" not found.`);
+                btn.disabled = false;
+                btn.classList.remove('loading');
+                return;
+            }
+
+            setStatus(`Playing: "${word}"`);
+            let index = 0;
+            if (animationInterval) clearInterval(animationInterval);
+
+            animationInterval = setInterval(() => {
+                if (index >= data.length) {
+                    clearInterval(animationInterval);
+                    animationInterval = null; // Reset
+                    setStatus("Translation Complete");
+                    btn.disabled = false;
+                    btn.classList.remove('loading');
+                    return;
+                }
+                applyPose(data[index]);
+                index++;
+            }, 33); // ~30fps
+
+        } catch (e) {
+            console.error(e);
+            setStatus("Connection Error");
+            btn.disabled = false;
+            btn.classList.remove('loading');
+        }
+    }
+
+    function setStatus(msg) {
+        const el = document.getElementById('status');
+        if(el) el.innerText = msg;
+    }
+
+    // UI Events
+    document.getElementById('playBtn').addEventListener('click', () => {
+        const word = document.getElementById('wordInput').value;
+        playAnimation(word);
+    });
+
+    document.getElementById('wordInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const word = document.getElementById('wordInput').value;
+             playAnimation(word);
+        }
+    });
+
+    // Start
+    init();
+
+    // Auto-play if word is provided from server (Django context)
+    const serverWord = "{{ word|default:'' }}";
+    if (serverWord) {
+        document.getElementById('wordInput').value = serverWord;
+        // Small delay to ensure model is loaded
+        const checkReady = setInterval(() => {
+            if (model) {
+                clearInterval(checkReady);
+                playAnimation(serverWord);
+            }
+        }, 500);
+    }
+</script>
+{% endblock %}

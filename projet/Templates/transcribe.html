@@ -6,70 +6,92 @@
 {% block css %}
 <style>
     :root {
-        --ink: #1b1b1f;
-        --muted: #525866;
-        --paper: #f8f5ef;
-        --accent: #e86a17;
-        --accent-2: #1f7a6f;
-        --accent-3: #f0b27a;
-        --stroke: rgba(27, 27, 31, 0.12);
-        --card: rgba(255, 255, 255, 0.86);
-        --shadow: 0 24px 60px rgba(16, 18, 26, 0.18);
+        --ink: #1d1a14;
+        --muted: rgba(29, 26, 20, 0.65);
+        --paper: #fffdf7;
+        --peach: #f7c7a9;
+        --coral: #f06a3f;
+        --teal: #0f7c7f;
+        --shadow: 0 18px 40px rgba(21, 18, 12, 0.12);
+        --radius-lg: 22px;
+        --radius-md: 16px;
+        --radius-sm: 12px;
     }
 
-    body {
-        background:
-            radial-gradient(1200px 500px at 5% -10%, #f7e2c8 0%, transparent 60%),
-            radial-gradient(900px 460px at 100% 0%, #d8efe8 0%, transparent 55%),
-            var(--paper);
-        color: var(--ink);
-    }
-
+    /* Match Learning Page Background */
     .transcribe-page {
         position: relative;
+        padding-top: 140px;
+        padding-bottom: 60px;
+        background: radial-gradient(circle at 15% 10%, rgba(240, 106, 63, 0.12), transparent 45%),
+            radial-gradient(circle at 80% 0%, rgba(15, 124, 127, 0.12), transparent 40%),
+            linear-gradient(180deg, #fff8f1 0%, #f9fbff 55%, #ffffff 100%);
+        color: var(--ink);
         overflow: hidden;
+        min-height: 100vh;
     }
 
-    .transcribe-page::before {
+    .transcribe-page::before,
+    .transcribe-page::after {
         content: "";
         position: absolute;
-        inset: -20% -10% auto;
-        height: 360px;
-        background: radial-gradient(circle at 20% 20%, rgba(232, 106, 23, 0.12), transparent 60%);
+        width: 320px;
+        height: 320px;
+        border-radius: 999px;
+        filter: blur(80px); /* Slightly increased blur for softness */
+        opacity: 0.2;
+        z-index: 0;
         pointer-events: none;
     }
 
-    .transcribe-section {
-        padding-top: 140px;
-        padding-bottom: 60px;
+    .transcribe-page::before {
+        background: #f7c7a9;
+        top: -80px;
+        right: -60px;
+    }
+
+    .transcribe-page::after {
+        background: #9ad7d9;
+        bottom: -120px;
+        left: -60px;
     }
 
     .hero-title {
         font-size: clamp(28px, 4vw, 40px);
         font-weight: 700;
         letter-spacing: 0.3px;
+        margin-bottom: 10px;
+        position: relative;
+        z-index: 1;
     }
 
     .hero-sub {
         color: var(--muted);
         margin-top: 8px;
         font-size: 16px;
+        position: relative;
+        z-index: 1;
     }
 
+    /* Card similar to Learning Form */
     .glass-card {
-        background: var(--card);
-        border: 1px solid var(--stroke);
-        border-radius: 24px;
-        padding: 26px;
+        position: relative;
+        z-index: 1;
+        background: rgba(255, 255, 255, 0.85);
+        border: 1px solid rgba(29, 26, 20, 0.08);
+        border-radius: var(--radius-lg);
+        padding: 36px 26px;
         box-shadow: var(--shadow);
-        backdrop-filter: blur(12px);
         animation: fade-up 0.6s ease both;
+        max-width: 800px;
+        margin: 0 auto;
     }
 
     .card-title {
         font-size: 18px;
         font-weight: 700;
         margin-bottom: 12px;
+        color: var(--ink);
     }
 
     #status {
@@ -85,68 +107,96 @@
         margin-top: 18px;
     }
 
+    /* Match Learning Button Style */
     .transcribe-actions .main-button {
-        border: 0;
+        outline: none;
+        border: none;
+        border-radius: 999px;
+        padding: 12px 24px;
+        font-size: 14px;
+        font-weight: 600;
         cursor: pointer;
-        background: linear-gradient(140deg, var(--accent), var(--accent-3));
-        color: #1c1208;
-        font-weight: 700;
-        padding: 12px 18px;
-        border-radius: 14px;
-        box-shadow: 0 14px 24px rgba(232, 106, 23, 0.28);
-        transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
-    }
-
-    .transcribe-actions .main-button:disabled {
-        filter: grayscale(0.4);
-        opacity: 0.6;
-        box-shadow: none;
-        cursor: not-allowed;
+        color: #fff !important;
+        background: linear-gradient(135deg, #f06a3f, #f08d4f); /* Orange Gradient */
+        box-shadow: 0 12px 20px rgba(240, 106, 63, 0.25);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
     .transcribe-actions .main-button:hover:not(:disabled) {
         transform: translateY(-2px);
-        box-shadow: 0 18px 32px rgba(232, 106, 23, 0.35);
+        box-shadow: 0 18px 26px rgba(240, 106, 63, 0.3);
     }
 
+    .transcribe-actions .main-button:disabled {
+        background: #ccc;
+        box-shadow: none;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    /* Special style for Send button if needed, or specific ones */
+    button[type="submit"].main-button {
+         background: linear-gradient(135deg, #0f7c7f, #149195); /* Teal Gradient for Send/Submit */
+         box-shadow: 0 12px 20px rgba(15, 124, 127, 0.25);
+    }
+    
+    button[type="submit"].main-button:hover {
+         box-shadow: 0 18px 26px rgba(15, 124, 127, 0.3);
+    }
+
+    /* Style specifically for Show Sign button to be distinct (Orange/Coral) */
+    button[type="submit"].main-button.btn-show-sign {
+        background: linear-gradient(135deg, #f06a3f, #f08d4f);
+        box-shadow: 0 12px 20px rgba(240, 106, 63, 0.25);
+    }
+
+    button[type="submit"].main-button.btn-show-sign:hover {
+        background: #f1556a;
+        box-shadow: 0 18px 26px rgba(240, 106, 63, 0.3);
+    }
+
+    /* Inputs matching Learning Page */
     .text-input {
-        padding: 12px 14px;
-        width: min(100%, 360px);
-        font-size: 16px;
+        padding: 12px 18px;
+        width: min(100%, 400px);
+        font-size: 15px;
         margin: 10px auto 0;
-        border-radius: 14px;
-        border: 1px solid var(--stroke);
-        background: rgba(255, 255, 255, 0.92);
+        border-radius: 999px;
+        border: 1px solid rgba(29, 26, 20, 0.15);
+        background: #fff;
         outline: none;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        transition: all 0.2s ease;
+        display: block;
     }
 
     .text-input:focus {
-        border-color: var(--accent-2);
-        box-shadow: 0 0 0 4px rgba(31, 122, 111, 0.18);
+        border-color: rgba(240, 106, 63, 0.7);
+        box-shadow: 0 0 0 3px rgba(240, 106, 63, 0.15);
     }
 
     .divider {
         height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(27, 27, 31, 0.18), transparent);
-        margin: 24px 0;
+        background: rgba(29, 26, 20, 0.1);
+        margin: 30px 0;
         border: 0;
     }
 
     .sign-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 18px;
-        margin-top: 18px;
+        margin-top: 24px;
     }
 
     .sign-card {
-        background: rgba(255, 255, 255, 0.96);
-        border-radius: 18px;
+        background: #fff;
+        border-radius: var(--radius-md);
         padding: 12px;
-        border: 1px solid var(--stroke);
+        border: 1px solid rgba(29, 26, 20, 0.12);
         text-align: center;
-        box-shadow: 0 16px 28px rgba(16, 18, 26, 0.12);
+        box-shadow: var(--shadow);
         transition: transform 0.2s ease;
     }
 
@@ -156,38 +206,39 @@
 
     .sign-card img {
         width: 100%;
-        height: 260px;
+        height: 200px;
         object-fit: cover;
-        border-radius: 14px;
-        background: #fff;
-        box-shadow: 0 10px 18px rgba(16, 18, 26, 0.15);
+        border-radius: 12px;
+        background: #fdfdfd;
     }
 
     .pill {
         display: inline-block;
-        margin-top: 8px;
-        padding: 4px 10px;
+        margin-top: 10px;
+        padding: 4px 12px;
         border-radius: 999px;
-        font-weight: 700;
-        background: rgba(27, 27, 31, 0.06);
+        font-weight: 600;
+        font-size: 14px;
+        background: rgba(15, 124, 127, 0.1);
+        color: var(--teal);
     }
 
     .result-box {
-        background: rgba(255, 255, 255, 0.86);
-        border-radius: 16px;
-        padding: 14px;
-        border: 1px solid var(--stroke);
+        background: #fafafa;
+        border-radius: var(--radius-md);
+        padding: 16px;
+        border: 1px solid rgba(29, 26, 20, 0.1);
         white-space: pre-wrap;
+        color: var(--ink);
     }
 
     @keyframes fade-up {
-        from { opacity: 0; transform: translateY(12px); }
+        from { opacity: 0; transform: translateY(14px); }
         to { opacity: 1; transform: translateY(0); }
     }
 
-    @media (max-width: 768px) {
-        .glass-card { padding: 18px; }
-        .sign-card img { height: 200px; }
+    #result {
+        margin-top: 60px; /* Space between the two cards */
     }
 </style>
 {% endblock %}
@@ -205,12 +256,18 @@
             <div class="row">
                 <div class="col-lg-6 offset-lg-3">
                     <div class="text-center glass-card">
-                        <h2 class="hero-title"> Record Audio and Convert to Text</h2>
+                        <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+                             <a href="{% url 'avatar' %}" class="main-button" style="text-decoration: none; font-size: 12px; padding: 10px 20px;">
+                                <i class="fa fa-user" aria-hidden="true"></i> Text to Sign Mode (Avatar)
+                             </a>
+                        </div>
+
+                        <h2 class="hero-title"><i class="fa fa-microphone" aria-hidden="true"></i> Record Audio and Convert to Text</h2>
                         <p class="hero-sub">Start recording from the microphone, then send it for transcription.</p>
 
                         <div class="transcribe-actions">
-                            <button id="start" class="main-button">Start Recording</button>
-                            <button id="stop" class="main-button" disabled>Stop Recording</button>
+                            <button id="start" class="main-button"><i class="fa fa-microphone" aria-hidden="true"></i> Start Recording</button>
+                            <button id="stop" class="main-button" disabled><i class="fa fa-stop" aria-hidden="true"></i> Stop Recording</button>
                         </div>
 
                         <p id="status" class="mt-2"></p>
@@ -219,17 +276,17 @@
                             {% csrf_token %}
                             <input type="file" name="audio" id="audioFile" hidden>
                             <div class="transcribe-actions">
-                                <button type="submit" class="main-button">Send Audio for Transcription</button>
+                                <button type="submit" class="main-button"><i class="fa fa-paper-plane" aria-hidden="true"></i> Send Audio for Transcription</button>
                             </div>
                         </form>
 
                         <hr class="divider">
-                        <h3 class="card-title">🔤 Or Type a Word</h3>
+                        <h3 class="card-title"><i class="fa fa-keyboard-o" aria-hidden="true"></i> Type a Word</h3>
                         <form method="post">
                             {% csrf_token %}
                             <input type="text" name="text_input" class="text-input" placeholder="Type a word (Arabic or Latin)">
                             <div class="transcribe-actions">
-                                <button type="submit" class="main-button">Show Sign</button>
+                                <button type="submit" class="main-button btn-show-sign"><i class="fa fa-eye" aria-hidden="true"></i> Show Sign</button>
                             </div>
                         </form>
                         
@@ -245,12 +302,12 @@
             <div class="row">
                 <div class="col-lg-8 offset-lg-2">
                     <div class="text-center glass-card">
-                        <h3 class="card-title">Extracted Text</h3>
+                        <h3 class="card-title"><i class="fa fa-file-text-o" aria-hidden="true"></i> Extracted Text</h3>
                         <div class="result-box">{{ text }}</div>
-                        <h3 class="card-title" style="margin-top: 16px;">Latin Transliteration</h3>
+                        <h3 class="card-title" style="margin-top: 16px;"><i class="fa fa-language" aria-hidden="true"></i> Latin Transliteration</h3>
                         <div class="result-box">{{ translit }}</div>
                         {% if sign_images %}
-                            <h3 class="card-title" style="margin-top: 16px;">Sign Images</h3>
+                            <h3 class="card-title" style="margin-top: 16px;"><i class="fa fa-picture-o" aria-hidden="true"></i> Sign Images</h3>
                             <div class="sign-grid">
                                 {% for item in sign_images %}
                                     <div class="sign-card">

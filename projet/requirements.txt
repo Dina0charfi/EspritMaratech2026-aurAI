@@ -1,0 +1,13 @@
+Django
+fido2
+Pillow
+vosk
+sounddevice
+numpy
+opencv-python
+mediapipe
+torch
+flask
+flask-cors
+openai-whisper
+wavio

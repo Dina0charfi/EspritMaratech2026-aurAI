@@ -1,0 +1,308 @@
+import React, { useState, useEffect, useRef, Suspense } from "react";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, Html } from "@react-three/drei";
+import Avatar from "./Avatar";
+import { Holistic } from "@mediapipe/holistic";
+import * as Kalidokit from "kalidokit"; 
+
+function App() {
+  const [keypoints, setKeypoints] = useState(null);
+  const [text, setText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [debugMode, setDebugMode] = useState(true); // Default to TRUE so user sees video
+  
+  const videoRef = useRef(null);
+  const poseRef = useRef(null);
+  const animationReq = useRef(null);
+  const animationTimer = useRef(null);
+
+  const [status, setStatus] = useState("Idle");
+  const [logs, setLogs] = useState([]);
+  
+  const addLog = (msg) => setLogs(prev => [msg, ...prev].slice(0, 5));
+
+  // Initialize MediaPipe Holistic
+  useEffect(() => {
+    addLog("Initializing MediaPipe Holistic...");
+    let holistic;
+    try {
+        holistic = new Holistic({
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${file}`,
+        });
+    } catch (e) {
+        addLog(`Error creating Holistic: ${e.message}`);
+        return;
+    }
+
+    holistic.setOptions({
+      modelComplexity: 1,
+      smoothLandmarks: true,
+      minDetectionConfidence: 0.5, // Lowered for better hit rate
+      minTrackingConfidence: 0.5,
+    });
+
+    holistic.onResults((results) => {
+      // Safety check: if video not playing or paused, skip solving to save resources
+      if (!videoRef.current || videoRef.current.paused || videoRef.current.ended) return;
+
+      const videoSize = { width: videoRef.current.videoWidth, height: videoRef.current.videoHeight };
+
+      // 1. Solve Pose
+      let riggedPose = null;
+      if (results.poseLandmarks) {
+          riggedPose = Kalidokit.Pose.solve(results.poseLandmarks, {
+            runtime: "mediapipe",
+            video: videoRef.current,
+            imageSize: videoSize
+          });
+      }
+      
+      // 2. Solve Hands
+      let riggedLeftHand = null;
+      let riggedRightHand = null;
+      
+      if (results.leftHandLandmarks) {
+          riggedLeftHand = Kalidokit.Hand.solve(results.leftHandLandmarks, "Left");
+      }
+      if (results.rightHandLandmarks) {
+          riggedRightHand = Kalidokit.Hand.solve(results.rightHandLandmarks, "Right");
+      }
+
+      // Merge results
+      const newKeypoints = {};
+      let handsFound = false;
+      
+      const mapKeypoint = (kObj, remap) => {
+           if(!kObj) return;
+           handsFound = true;
+           for(const part in kObj) {
+               const key = remap[part] || part;
+               if(kObj[part]) {
+                   newKeypoints[key] = {
+                       x: kObj[part].x,
+                       y: kObj[part].y,
+                       z: kObj[part].z
+                   };
+                   // Hips motion: Add a modifier to ensure it's not too extreme
+                   if(part === "Hips" && kObj.Hips && kObj.Hips.position) {
+                        newKeypoints[key].position = {
+                            x: -kObj.Hips.position.x * 0.5, // Dampen movement
+                            y: kObj.Hips.position.y * 0.5,
+                            z: kObj.Hips.position.z * 0.5,
+                        };
+                   }
+               }
+           }
+      };
+      
+      // Always map body if available
+      if (riggedPose) {
+        const poseMap = {
+             "RightUpperArm": "RightArm", "RightLowerArm": "RightForeArm",
+             "LeftUpperArm": "LeftArm", "LeftLowerArm": "LeftForeArm",
+             "RightHand": "RightHand", "LeftHand": "LeftHand",
+             "Spine": "Spine", "Hips": "Hips", "Neck": "Neck",
+             "RightUpperLeg": "RightUpLeg", "RightLowerLeg": "RightLeg",
+             "LeftUpperLeg": "LeftUpLeg", "LeftLowerLeg": "LeftLeg"
+        };
+        mapKeypoint(riggedPose, poseMap);
+      }
+      
+      if (riggedLeftHand) mapKeypoint(riggedLeftHand, {}); 
+      if (riggedRightHand) mapKeypoint(riggedRightHand, {});
+
+      setKeypoints(newKeypoints);
+      setStatus(handsFound ? "Animating (Hands Detected)" : "Animating (Pose Only)");
+    });
+
+    poseRef.current = holistic; // Reusing ref name for simplicity
+    addLog("Holistic Ready.");
+  }, []);
+  
+  // Debug: Fake animation to test Three.js
+  const runTestAnimation = () => {
+      addLog("Starting Test Animation...");
+      let t = 0;
+      const interval = setInterval(() => {
+          t += 0.1;
+          setKeypoints({
+              "RightArm": { x: 0, y: 0, z: Math.sin(t) },
+              "LeftArm": { x: 0, y: 0, z: -Math.sin(t) }
+          });
+          if(t > 10) clearInterval(interval);
+      }, 50);
+  };
+
+  const playAnimationFrames = (frames, fps = 24) => {
+    if (!Array.isArray(frames) || frames.length === 0) {
+      addLog("No animation frames received.");
+      return;
+    }
+
+    if (animationTimer.current) {
+      clearInterval(animationTimer.current);
+      animationTimer.current = null;
+    }
+
+    let index = 0;
+    const interval = Math.max(20, Math.floor(1000 / fps));
+    animationTimer.current = setInterval(() => {
+      const frame = frames[index % frames.length];
+      if (frame) setKeypoints(frame);
+      index += 1;
+    }, interval);
+
+    setStatus("Animating (Model Frames)");
+    addLog(`Playing ${frames.length} frames at ${fps} fps`);
+  };
+
+  const handleTranslate = () => {
+    if (!text) return;
+    setLoading(true);
+    setStatus("Fetching video...");
+    addLog(`Fetching video for: ${text}`);
+
+    // Request animation frames from model (backend)
+    fetch("http://localhost:5000/predict", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ word: text }),
+    })
+      .then((res) => res.json())
+      .then((frames) => {
+        if (Array.isArray(frames) && frames.length > 0) {
+          playAnimationFrames(frames, 24);
+        } else {
+          addLog("No model frames found for this word.");
+        }
+      })
+      .catch((err) => {
+        console.error("Model fetch error:", err);
+        addLog("Model fetch error.");
+      });
+
+    // Use the backend as a video server with Cache Busting
+    const videoUrl = `http://localhost:5000/get_video/${encodeURIComponent(text)}?t=${Date.now()}`;
+    
+        if (videoRef.current) {
+        videoRef.current.src = videoUrl;
+        videoRef.current.crossOrigin = "anonymous";
+        videoRef.current.muted = true; // IMPORTANT: Muted is required for autoplay usually
+        videoRef.current.loop = true; // Added loop in case video is short
+        
+        videoRef.current.onloadeddata = () => {
+            addLog("Video loaded. Playing...");
+            videoRef.current.play().then(() => {
+            if (animationTimer.current) {
+              clearInterval(animationTimer.current);
+              animationTimer.current = null;
+            }
+                setLoading(false);
+                setStatus("Tracking...");
+                if(animationReq.current) cancelAnimationFrame(animationReq.current);
+                processVideoFrame();
+            }).catch(err => {
+                const errStr = "Play error: " + err.message;
+                console.error(errStr);
+                addLog(errStr);
+                setLoading(false);
+                setStatus("Error");
+                alert("Could not play video. Click inside the page and try again.");
+            });
+        };
+        
+        videoRef.current.onerror = () => {
+             addLog("Video failed to load.");
+             setLoading(false);
+             setStatus("Not Found");
+             alert(`Video for '${text}' not found on server.`);
+        }
+    }
+  };
+
+  const processVideoFrame = async () => {
+    if (videoRef.current && !videoRef.current.paused && !videoRef.current.ended) {
+      if (poseRef.current) {
+        try {
+            await poseRef.current.send({ image: videoRef.current });
+        } catch(e) {
+            console.error("Pose send error:", e);
+        }
+      }
+      animationReq.current = requestAnimationFrame(processVideoFrame);
+    } else {
+        setStatus("Video Stopped");
+    }
+  };
+
+
+
+  return (
+    <div style={{ width: "100vw", height: "100vh", display: "flex", flexDirection: "column" }}>
+      {/* Hidden Video Element for Processing */}
+      <video 
+        ref={videoRef}
+        crossOrigin="anonymous" 
+        width="640"
+        height="480"
+        style={{ 
+            position: "absolute", top: 10, left: 10, width: "240px", height: "auto", 
+            zIndex: 1000, border: "2px solid red",
+            visibility: debugMode ? "visible" : "hidden" // Toggle visibility
+        }} 
+        muted 
+        playsInline
+      />
+
+      <div style={{ padding: "20px", display: "flex", gap: "10px", zIndex: 10, marginLeft: "270px", flexDirection: "column" }}>
+        <div style={{ display: "flex", gap: "10px" }}>
+        <input 
+          type="text" 
+          value={text} 
+          onChange={(e) => setText(e.target.value)} 
+          placeholder="Enter Tunisian Sign word (e.g., bras)"
+          style={{ padding: "10px", fontSize: "16px", width: "300px" }}
+        />
+        <button 
+          onClick={handleTranslate} 
+          disabled={loading}
+          style={{ padding: "10px 20px", fontSize: "16px", cursor: "pointer" }}
+        >
+          {loading ? "Loading..." : "Translate"}
+        </button>
+        <button 
+          onClick={runTestAnimation} 
+          style={{ padding: "10px 20px", fontSize: "16px", cursor: "pointer", background: "orange" }}
+        >
+          Test Movement
+        </button>
+        </div>
+        <div style={{ color: "black", background:"rgba(255,255,255,0.7)", padding: "5px", borderRadius: "4px" }}>
+            <strong>Status:</strong> {status} <br/>
+            <label style={{fontSize: "12px"}}>
+              <input type="checkbox" checked={debugMode} onChange={e => setDebugMode(e.target.checked)} /> Show Video
+            </label>
+            <div style={{fontSize: "12px", marginTop: "5px"}}>
+               {logs.map((l, i) => <div key={i}>{l}</div>)}
+            </div>
+        </div>
+      </div>
+
+      <Canvas camera={{ position: [0, 1.5, 3], fov: 50 }}>
+        <ambientLight intensity={0.5} />
+        <directionalLight position={[5, 10, 5]} intensity={1} />
+        <Suspense fallback={<Html position={[0,0,0]}><div>Loading 3D Model...</div></Html>}>
+            <Avatar keypoints={keypoints} />
+        </Suspense>
+        {/* Debug Cube to prove Scene is Rendering */}
+        <mesh position={[2, 0, 0]}>
+            <boxGeometry />
+            <meshStandardMaterial color="green" />
+        </mesh>
+        <OrbitControls target={[0, 1.4, 0]} />
+      </Canvas>
+    </div>
+  );
+}
+
+export default App;

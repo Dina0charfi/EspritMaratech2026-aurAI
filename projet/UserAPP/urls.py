@@ -17,5 +17,5 @@ urlpatterns = [
     path('webauthn/authenticate/options/', views.webauthn_authenticate_options, name='webauthn_authenticate_options'),
     path('webauthn/authenticate/verify/', views.webauthn_authenticate_verify, name='webauthn_authenticate_verify'),
     path('reclamation/', views.submit_reclamation, name='reclamation'),
-
+    path('api/animation/', views.get_animation, name='get_animation'),
 ]

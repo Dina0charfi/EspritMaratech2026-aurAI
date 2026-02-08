@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.contrib import messages
 import torch
 from .models import UserProfile, Reclamation, WebAuthnCredential
@@ -449,3 +449,27 @@ def signup(request):
             return render(request, "home.html")
 
     return render(request, "signup.html", context)
+
+
+@csrf_exempt
+def get_animation(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            word = data.get('word', '').lower().strip()
+            
+            # Construct path to animations
+            animations_dir = settings.BASE_DIR / 'sign-avatar' / 'backend' / 'dataset_animations'
+            json_path = animations_dir / f"{word}.json"
+            
+            if json_path.exists():
+                with open(json_path, "r", encoding='utf-8') as f:
+                    animation_data = json.load(f)
+                return JsonResponse(animation_data, safe=False)
+            else:
+                return JsonResponse([], safe=False) # Return empty list if not found
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+            
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
