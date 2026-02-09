@@ -16,6 +16,7 @@ class UserProfile(models.Model):
 
 
 class WebAuthnCredential(models.Model):
+	# Stored WebAuthn credential used for device-based authentication.
 	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="webauthn_credentials")
 	credential_id = models.BinaryField(unique=True)
 	public_key = models.BinaryField()
@@ -42,3 +43,15 @@ class Reclamation(models.Model):
 
 	def __str__(self):
 		return f"{self.category} from {self.name}"
+
+
+class Event(models.Model):
+	name = models.CharField(max_length=160)
+	description = models.TextField()
+	date = models.DateField()
+	location = models.CharField(max_length=160, blank=True)
+	image = models.ImageField(upload_to="events/", blank=True, null=True)
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	def __str__(self):
+		return self.name

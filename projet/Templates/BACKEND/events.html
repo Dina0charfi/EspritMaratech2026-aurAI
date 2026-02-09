@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Backoffice - Events" %}{% endblock %}
+
+{% block css %}
+<style>
+    .backoffice-page {
+        padding-top: 150px;
+        padding-bottom: 90px;
+        background: radial-gradient(900px 400px at 10% -10%, #ffe1c4 0%, transparent 60%),
+                    radial-gradient(800px 420px at 90% 0%, #d9fff7 0%, transparent 55%),
+                    linear-gradient(180deg, #fffaf4 0%, #ffffff 100%);
+    }
+
+    .backoffice-card {
+        background: rgba(255, 255, 255, 0.94);
+        border-radius: 22px;
+        padding: 28px;
+        border: 1px solid rgba(16, 18, 26, 0.12);
+        box-shadow: 0 24px 50px rgba(16, 18, 26, 0.12);
+        backdrop-filter: blur(10px);
+    }
+
+    .backoffice-title {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .backoffice-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px 16px;
+    }
+
+    .backoffice-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .backoffice-label {
+        font-weight: 600;
+        font-size: 13px;
+        color: rgba(16, 18, 26, 0.7);
+    }
+
+    .backoffice-input,
+    .backoffice-textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(16, 18, 26, 0.12);
+        background: rgba(255, 255, 255, 0.95);
+    }
+
+    .backoffice-textarea {
+        min-height: 110px;
+        resize: vertical;
+    }
+
+    .backoffice-actions {
+        margin-top: 14px;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .backoffice-btn {
+        background: #f4511e;
+        color: #ffffff;
+        border: 0;
+        border-radius: 12px;
+        padding: 10px 16px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .backoffice-table {
+        width: 100%;
+        margin-top: 24px;
+        border-collapse: collapse;
+        font-size: 14px;
+    }
+
+    .backoffice-table th,
+    .backoffice-table td {
+        border-bottom: 1px solid rgba(16, 18, 26, 0.12);
+        padding: 10px 8px;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    .event-image {
+        width: 90px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid rgba(16, 18, 26, 0.12);
+        background: #ffffff;
+    }
+
+    @media (max-width: 768px) {
+        .backoffice-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="backoffice-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 offset-lg-1">
+                <div class="backoffice-card">
+                    <h1 class="backoffice-title">{% trans "Event management" %}</h1>
+
+                    {% if error %}
+                        <div style="color:#b00020; margin-bottom: 12px; font-weight: 600;">{{ error }}</div>
+                    {% endif %}
+                    {% if success %}
+                        <div style="color:#0b6b3a; margin-bottom: 12px; font-weight: 600;">{{ success }}</div>
+                    {% endif %}
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="backoffice-grid">
+                            <div class="backoffice-field">
+                                <label class="backoffice-label" for="name">{% trans "Name" %}</label>
+                                <input type="text" id="name" name="name" class="backoffice-input" required>
+                            </div>
+                            <div class="backoffice-field">
+                                <label class="backoffice-label" for="date">{% trans "Date" %}</label>
+                                <input type="date" id="date" name="date" class="backoffice-input" required>
+                            </div>
+                            <div class="backoffice-field">
+                                <label class="backoffice-label" for="location">{% trans "Location" %}</label>
+                                <input type="text" id="location" name="location" class="backoffice-input">
+                            </div>
+                            <div class="backoffice-field">
+                                <label class="backoffice-label" for="image">{% trans "Image" %}</label>
+                                <input type="file" id="image" name="image" class="backoffice-input" accept="image/*">
+                            </div>
+                            <div class="backoffice-field" style="grid-column: 1 / -1;">
+                                <label class="backoffice-label" for="description">{% trans "Description" %}</label>
+                                <textarea id="description" name="description" class="backoffice-textarea" required></textarea>
+                            </div>
+                        </div>
+                        <div class="backoffice-actions">
+                            <button type="submit" class="backoffice-btn">{% trans "Create event" %}</button>
+                        </div>
+                    </form>
+
+                    <table class="backoffice-table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Name" %}</th>
+                                <th>{% trans "Date" %}</th>
+                                <th>{% trans "Location" %}</th>
+                                <th>{% trans "Image" %}</th>
+                                <th>{% trans "Description" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for event in events %}
+                                <tr>
+                                    <td>{{ event.name }}</td>
+                                    <td>{{ event.date }}</td>
+                                    <td>{{ event.location|default:"-" }}</td>
+                                    <td>
+                                        {% if event.image %}
+                                            <img src="{{ event.image.url }}" alt="{{ event.name }}" class="event-image">
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ event.description }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="5">{% trans "No events available." %}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Register Face ID{% endblock %}
+{% block title %}{% trans "Register Face ID" %}{% endblock %}
 
 {% block css %}
 <style>
@@ -65,11 +66,11 @@
         <div class="row">
             <div class="col-lg-5 offset-lg-3">
                 <div class="webauthn-card">
-                    <h1 class="webauthn-title">Register Face ID</h1>
-                    <p class="webauthn-sub">Secure your account with Face ID or a security key.</p>
-                    <button id="registerFaceId" class="webauthn-btn">Register Face ID</button>
+                    <h1 class="webauthn-title">{% trans "Register Face ID" %}</h1>
+                    <p class="webauthn-sub">{% trans "Secure your account with Face ID or a security key." %}</p>
+                    <button id="registerFaceId" class="webauthn-btn">{% trans "Register Face ID" %}</button>
                     <div id="webauthnMessage" class="webauthn-message"></div>
-                    <a href="/profile/" class="webauthn-link">Back to profile</a>
+                    <a href="/profile/" class="webauthn-link">{% trans "Back to profile" %}</a>
                 </div>
             </div>
         </div>
@@ -79,6 +80,7 @@
 
 {% block extra_js %}
 <script>
+    // Read the CSRF cookie for POST requests.
     function getCookie(name) {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);
@@ -86,6 +88,7 @@
         return null;
     }
 
+    // Convert ArrayBuffer to base64url for WebAuthn payload.
     function bufferToBase64url(buffer) {
         const bytes = new Uint8Array(buffer);
         let binary = "";
@@ -93,6 +96,7 @@
         return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
     }
 
+    // Convert base64url to ArrayBuffer for WebAuthn APIs.
     function base64urlToBuffer(value) {
         const base64 = value.replace(/-/g, "+").replace(/_/g, "/");
         const pad = base64.length % 4 ? "=".repeat(4 - (base64.length % 4)) : "";
@@ -135,9 +139,10 @@
                     }));
                 }
 
+                // Create a WebAuthn credential on the authenticator.
                 const credential = await navigator.credentials.create({ publicKey: options });
                 if (!credential) {
-                    throw new Error("No credential returned.");
+                    throw new Error("{% trans "No credential returned." %}");
                 }
 
                 const attestation = {
@@ -150,6 +155,7 @@
                     }
                 };
 
+                // Send attestation to the server for verification.
                 const verifyRes = await fetch("/webauthn/register/verify/", {
                     method: "POST",
                     credentials: "same-origin",
@@ -166,10 +172,10 @@
                     return;
                 }
 
-                messageEl.textContent = "Face ID registered successfully.";
+                messageEl.textContent = "{% trans "Face ID registered successfully." %}";
                 messageEl.style.color = "#0b6b3a";
             } catch (err) {
-                messageEl.textContent = err.message || "Registration failed.";
+                messageEl.textContent = err.message || "{% trans "Registration failed." %}";
                 messageEl.style.color = "#b00020";
             }
         });

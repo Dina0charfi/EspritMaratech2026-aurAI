@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+<<<<<<< Updated upstream
 
 {% block title %}Sign Avatar AI{% endblock %}
 {% block css %}
@@ -211,6 +212,23 @@
         }
     }
 </script>
+=======
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% trans "3D Avatar" %}</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        #avatar-container { width: 100%; height: 500px; }
+    </style>
+</head>
+<body>
+<main id="main-content" role="main">
+    <div id="avatar-container"></div>
+</main>
+>>>>>>> Stashed changes
 
 <script type="module">
     import * as THREE from 'three';
@@ -279,10 +297,17 @@
         renderer.outputColorSpace = THREE.SRGBColorSpace;
         container.appendChild(renderer.domElement);
 
+<<<<<<< Updated upstream
         // Lights
         const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.2);
         hemiLight.position.set(0, 20, 0);
         scene.add(hemiLight);
+=======
+    }, undefined, function(error){
+        console.error('GLB load error:', error);
+        container.innerHTML = '<div style="padding:12px;color:red;">{% trans "Error: unable to load Animated_Woman.glb" %}</div>';
+    });
+>>>>>>> Stashed changes
 
         const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
         dirLight.position.set(3, 10, 10);

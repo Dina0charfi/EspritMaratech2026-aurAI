@@ -1,6 +1,9 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="en">
+{% get_current_language as LANGUAGE_CODE %}
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
 
 <head>
 
@@ -10,7 +13,7 @@
     <meta name="author" content="TemplateMo">
     <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
 
-    <title>{% block title %}Lava Landing Page HTML Template{% endblock %}</title>
+    <title>{% block title %}{% trans "Lava Landing Page HTML Template" %}{% endblock %}</title>
 <!--
 
 Lava Landing Page
@@ -67,6 +70,11 @@ https://templatemo.com/tm-540-lava-landing-page
         }
 
         .main-nav { position: relative; }
+        .main-nav .logo {
+            font-size: 20px;
+            margin-right: 8px;
+            margin-left: -30px;
+        }
         .auth-btns {
             position: absolute;
             right: 0;
@@ -76,6 +84,16 @@ https://templatemo.com/tm-540-lava-landing-page
             gap: 8px;
             align-items: center;
             z-index: 30;
+        }
+
+        .rtl .auth-btns {
+            right: auto;
+            left: 0;
+        }
+
+        .rtl .profile-dropdown {
+            right: auto;
+            left: 0;
         }
 
         .signup-btn,
@@ -93,6 +111,21 @@ https://templatemo.com/tm-540-lava-landing-page
             background: #ffffff;
             color: #f4511e;
             border: 1px solid #f4511e;
+        }
+
+        .lang-form {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .lang-select {
+            padding: 6px 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(16, 18, 26, 0.2);
+            background: #ffffff;
+            font-size: 13px;
+            font-weight: 600;
+            color: #10121a;
         }
 
         .signup-btn:hover,
@@ -261,50 +294,65 @@ https://templatemo.com/tm-540-lava-landing-page
     </style>
 
 </head>
-<body>
-    <a class="skip-link" href="#main-content">Skip to main content</a>
+<body class="{% if LANGUAGE_BIDI %}rtl{% endif %}">
+    <a class="skip-link" href="#main-content">{% trans "Skip to main content" %}</a>
     <header class="header-area header-sticky">
         <div class="container">
             <div class="row">
                 <div class="col-12">
                     <nav class="main-nav">
                         <!-- ***** Logo Start ***** -->
-                        <a href="/" class="logo">Voice-to-Sign</a>
+                        <a href="/" class="logo">{% trans "TunSign" %}</a>
                         <ul class="nav">
-                            <li class="scroll-to-section"><a href="/" class="menu-item">Home</a></li>
-                            <li class="scroll-to-section"><a href="/#about" class="menu-item">About</a></li>
-                            <li class="scroll-to-section"><a href="/transcribe/" class="menu-item">Transcribe</a></li>
-                            <li class="scroll-to-section"><a href="/learning/" class="menu-item">Learning</a></li>
+                            <li class="scroll-to-section"><a href="/" class="menu-item">{% trans "Home" %}</a></li>
+                            <li class="scroll-to-section"><a href="/#about" class="menu-item">{% trans "About" %}</a></li>
+                            <li class="scroll-to-section"><a href="/transcribe/" class="menu-item">{% trans "Transcribe" %}</a></li>
+                            <li class="scroll-to-section"><a href="/learning/" class="menu-item">{% trans "Learning" %}</a></li>
                             {% if user.is_authenticated %}
-                                <li class="scroll-to-section nav-profile"><a href="/profile/" class="menu-item">View profile</a></li>
-                                <li class="scroll-to-section nav-signout"><a href="/signout/" class="menu-item">Sign out</a></li>
+                                <li class="scroll-to-section nav-profile"><a href="/profile/" class="menu-item">{% trans "View profile" %}</a></li>
+                                <li class="scroll-to-section nav-signout"><a href="/signout/" class="menu-item">{% trans "Sign out" %}</a></li>
                             {% endif %}
                         </ul>
 
                         <div class="auth-btns">
+                            <form class="lang-form" action="/i18n/setlang/" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                {% get_current_language as LANGUAGE_CODE %}
+                                {% get_available_languages as LANGUAGES %}
+                                <select class="lang-select" name="language" onchange="this.form.submit()" aria-label="{% trans "Language" %}">
+                                    {% for lang in LANGUAGES %}
+                                        <option value="{{ lang.0 }}" {% if lang.0 == LANGUAGE_CODE %}selected{% endif %}>{{ lang.1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </form>
                             {% if user.is_authenticated %}
                                 <div class="profile-menu">
-                                    <button type="button" class="profile-toggle" aria-label="Open profile menu">
+                                    <button type="button" class="profile-toggle" aria-label="{% trans "Open profile menu" %}">
                                         {% if user.userprofile.profile_image %}
-                                            <img src="{{ user.userprofile.profile_image.url }}" alt="Profile" class="profile-avatar">
+                                            <img src="{{ user.userprofile.profile_image.url }}" alt="{% trans "Profile" %}" class="profile-avatar">
                                         {% else %}
-                                            <img src="{% static 'assets/images/testimonial-author-1.png' %}" alt="Profile" class="profile-avatar">
+                                            <img src="{% static 'assets/images/testimonial-author-1.png' %}" alt="{% trans "Profile" %}" class="profile-avatar">
                                         {% endif %}
                                         <span class="profile-name">{{ user.first_name|default:user.username }}</span>
                                     </button>
                                     <div class="profile-dropdown">
-                                        <a href="/profile/">View profile</a>
-                                        <a href="/signout/">Sign out</a>
+                                        <a href="/profile/">{% trans "View profile" %}</a>
+                                        {% if user.is_superuser %}
+                                            <a href="/backoffice/events/">{% trans "Manage events" %}</a>
+                                            <a href="/backoffice/users/">{% trans "Manage users" %}</a>
+                                            <a href="/backoffice/reclamations/">{% trans "Manage reclamations" %}</a>
+                                        {% endif %}
+                                        <a href="/signout/">{% trans "Sign out" %}</a>
                                     </div>
                                 </div>
                             {% else %}
-                                <a href="/signin/" class="signin-btn">Sign in</a>
-                                <a href="/signup/" class="signup-btn">Sign up</a>
+                                <a href="/signin/" class="signin-btn">{% trans "Sign in" %}</a>
+                                <a href="/signup/" class="signup-btn">{% trans "Sign up" %}</a>
                             {% endif %}
                         </div>
-
                         <a class='menu-trigger'>
-                            <span>Menu</span>
+                            <span>{% trans "Menu" %}</span>
                         </a>
                         <!-- ***** Menu End ***** -->
                     </nav>
@@ -338,39 +386,39 @@ https://templatemo.com/tm-540-lava-landing-page
                                 <div class="row">
                                     <div class="col-md-6 col-sm-12">
                                         <fieldset>
-                                            <label class="sr-only" for="name">Full name</label>
-                                            <input name="name" type="text" id="name" placeholder="Full name" required=""
+                                            <label class="sr-only" for="name">{% trans "Full name" %}</label>
+                                            <input name="name" type="text" id="name" placeholder="{% trans "Full name" %}" required=""
                                                 style="background-color: rgba(250,250,250,0.3);">
                                         </fieldset>
                                     </div>
                                     <div class="col-md-6 col-sm-12">
                                         <fieldset>
-                                            <label class="sr-only" for="email">Email address</label>
-                                            <input name="email" type="text" id="email" placeholder="Email address"
+                                            <label class="sr-only" for="email">{% trans "Email address" %}</label>
+                                            <input name="email" type="text" id="email" placeholder="{% trans "Email address" %}"
                                                 required="" style="background-color: rgba(250,250,250,0.3);">
                                         </fieldset>
                                     </div>
                                     <div class="col-lg-12">
                                         <fieldset>
-                                            <label class="sr-only" for="category">Message type</label>
-                                            <select name="category" id="category" class="footer-select" required="" aria-label="Message type">
-                                                <option value="" disabled selected>Message type</option>
-                                                <option value="recommendation">Recommendation</option>
-                                                <option value="alert">Alert</option>
-                                                <option value="reclamation">Complaint</option>
+                                            <label class="sr-only" for="category">{% trans "Message type" %}</label>
+                                            <select name="category" id="category" class="footer-select" required="" aria-label="{% trans "Message type" %}">
+                                                <option value="" disabled selected>{% trans "Message type" %}</option>
+                                                <option value="recommendation">{% trans "Recommendation" %}</option>
+                                                <option value="alert">{% trans "Alert" %}</option>
+                                                <option value="reclamation">{% trans "Complaint" %}</option>
                                             </select>
                                         </fieldset>
                                     </div>
                                     <div class="col-lg-12">
                                         <fieldset>
-                                            <label class="sr-only" for="message">Your message</label>
-                                            <textarea name="message" rows="6" id="message" placeholder="Your message"
+                                            <label class="sr-only" for="message">{% trans "Your message" %}</label>
+                                            <textarea name="message" rows="6" id="message" placeholder="{% trans "Your message" %}"
                                                 required="" style="background-color: rgba(250,250,250,0.3);"></textarea>
                                         </fieldset>
                                     </div>
                                     <div class="col-lg-12">
                                         <fieldset>
-                                            <button type="submit" id="form-submit" class="main-button">Send</button>
+                                            <button type="submit" id="form-submit" class="main-button">{% trans "Send" %}</button>
                                         </fieldset>
                                     </div>
                                 </div>
@@ -379,16 +427,15 @@ https://templatemo.com/tm-540-lava-landing-page
                     </div>
                     <!-- ***** Contact Form End ***** -->
                     <div class="right-content col-lg-6 col-md-12 col-sm-12">
-                        <h2>About <em>the platform</em></h2>
-                        <p>Voice-to-Sign is built for Tunisian Sign Language (TSL). It helps convert speech into text
-                            and display signs to support communication and learning.
-                            <br><br>To contact us or share an idea, use this form.</p>
+                        <h2>{% trans "About" %} <em>{% trans "the platform" %}</em></h2>
+                        <p>{% trans "Voice-to-Sign is built for Tunisian Sign Language (TSL). It helps convert speech into text and display signs to support communication and learning." %}
+                            <br><br>{% trans "To contact us or share an idea, use this form." %}</p>
                         <ul class="social">
-                            <li><a href="#" aria-label="Facebook"><i class="fa fa-facebook"></i><span class="sr-only">Facebook</span></a></li>
-                            <li><a href="#" aria-label="Twitter"><i class="fa fa-twitter"></i><span class="sr-only">Twitter</span></a></li>
-                            <li><a href="#" aria-label="LinkedIn"><i class="fa fa-linkedin"></i><span class="sr-only">LinkedIn</span></a></li>
-                            <li><a href="#" aria-label="RSS"><i class="fa fa-rss"></i><span class="sr-only">RSS</span></a></li>
-                            <li><a href="#" aria-label="Dribbble"><i class="fa fa-dribbble"></i><span class="sr-only">Dribbble</span></a></li>
+                            <li><a href="#" aria-label="{% trans "Facebook" %}"><i class="fa fa-facebook"></i><span class="sr-only">{% trans "Facebook" %}</span></a></li>
+                            <li><a href="#" aria-label="{% trans "Twitter" %}"><i class="fa fa-twitter"></i><span class="sr-only">{% trans "Twitter" %}</span></a></li>
+                            <li><a href="#" aria-label="{% trans "LinkedIn" %}"><i class="fa fa-linkedin"></i><span class="sr-only">{% trans "LinkedIn" %}</span></a></li>
+                            <li><a href="#" aria-label="{% trans "RSS" %}"><i class="fa fa-rss"></i><span class="sr-only">{% trans "RSS" %}</span></a></li>
+                            <li><a href="#" aria-label="{% trans "Dribbble" %}"><i class="fa fa-dribbble"></i><span class="sr-only">{% trans "Dribbble" %}</span></a></li>
                         </ul>
                     </div>
                 </div>
@@ -396,9 +443,9 @@ https://templatemo.com/tm-540-lava-landing-page
             <div class="row">
                 <div class="col-lg-12">
                     <div class="sub-footer">
-                        <p>Copyright &copy; 2026 Voice-to-Sign TSL
+                        <p>{% trans "Copyright" %} &copy; 2026 Voice-to-Sign TSL
 
-                        | Designed by <a rel="nofollow" href="https://templatemo.com">AurAI</a></p>
+                        | {% trans "Designed by" %} <a rel="nofollow" href="https://templatemo.com">AurAI</a></p>
                     </div>
                 </div>
             </div>

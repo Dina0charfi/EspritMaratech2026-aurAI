@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Edit Profile{% endblock %}
+{% block title %}{% trans "Edit profile" %}{% endblock %}
 
 {% block css %}
 <style>
@@ -114,8 +115,8 @@
         <div class="row">
             <div class="col-lg-6 offset-lg-3">
                 <div class="edit-card">
-                    <h1 class="edit-title">Edit Profile</h1>
-                    <p class="edit-sub">Update your personal details and profile photo.</p>
+                    <h1 class="edit-title">{% trans "Edit profile" %}</h1>
+                    <p class="edit-sub">{% trans "Update your personal details and profile photo." %}</p>
 
                     {% if error %}
                         <div style="color:#b00020; margin-bottom: 12px; font-weight: 600;">{{ error }}</div>
@@ -128,49 +129,49 @@
                         {% csrf_token %}
                         <div class="edit-grid">
                             <div class="edit-field">
-                                <label class="edit-label" for="full_name">Full name</label>
+                                <label class="edit-label" for="full_name">{% trans "Full name" %}</label>
                                 <input type="text" id="full_name" name="full_name" class="edit-input" value="{{ user.first_name|default:user.username }}" required>
                             </div>
                             <div class="edit-field">
-                                <label class="edit-label" for="email">Email</label>
+                                <label class="edit-label" for="email">{% trans "Email" %}</label>
                                 <input type="email" id="email" name="email" class="edit-input" value="{{ user.email }}" required>
                             </div>
                             <div class="edit-field">
-                                <label class="edit-label" for="phone">Phone</label>
+                                <label class="edit-label" for="phone">{% trans "Phone" %}</label>
                                 <input type="tel" id="phone" name="phone" class="edit-input" value="{{ profile.phone|default:"" }}" required>
                             </div>
                             <div class="edit-field">
-                                <label class="edit-label" for="birth_date">Date of birth</label>
+                                <label class="edit-label" for="birth_date">{% trans "Date of birth" %}</label>
                                 <input type="date" id="birth_date" name="birth_date" class="edit-input" value="{{ profile.birth_date|date:"Y-m-d" }}" required>
                             </div>
                             <div class="edit-field">
-                                <label class="edit-label" for="has_disability">Disability</label>
+                                <label class="edit-label" for="has_disability">{% trans "Disability" %}</label>
                                 <select id="has_disability" name="has_disability" class="edit-input" required>
-                                    <option value="" disabled {% if profile.has_disability == None %}selected{% endif %}>Do you have a disability?</option>
-                                    <option value="yes" {% if profile.has_disability %}selected{% endif %}>Yes</option>
-                                    <option value="no" {% if profile.has_disability == False %}selected{% endif %}>No</option>
+                                    <option value="" disabled {% if profile.has_disability == None %}selected{% endif %}>{% trans "Do you have a disability?" %}</option>
+                                    <option value="yes" {% if profile.has_disability %}selected{% endif %}>{% trans "Yes" %}</option>
+                                    <option value="no" {% if profile.has_disability == False %}selected{% endif %}>{% trans "No" %}</option>
                                 </select>
                             </div>
                             <div class="edit-field" id="disability-type-field">
-                                <label class="edit-label" for="disability_type">Disability type</label>
-                                <input type="text" id="disability_type" name="disability_type" class="edit-input" value="{{ profile.disability_type|default:"" }}" placeholder="Disability type (if yes)">
+                                <label class="edit-label" for="disability_type">{% trans "Disability type" %}</label>
+                                <input type="text" id="disability_type" name="disability_type" class="edit-input" value="{{ profile.disability_type|default:"" }}" placeholder="{% trans "Disability type (if yes)" %}">
                             </div>
                             <div class="edit-field">
-                                <label class="edit-label" for="profile_image">Profile photo</label>
+                                <label class="edit-label" for="profile_image">{% trans "Profile photo" %}</label>
                                 <input type="file" id="profile_image" name="profile_image" class="edit-input" accept="image/*">
                             </div>
                             <div class="edit-field">
-                                <label class="edit-label">Current photo</label>
+                                <label class="edit-label">{% trans "Current photo" %}</label>
                                 {% if profile.profile_image %}
-                                    <img src="{{ profile.profile_image.url }}" alt="Profile" class="edit-avatar">
+                                    <img src="{{ profile.profile_image.url }}" alt="{% trans "Profile" %}" class="edit-avatar">
                                 {% else %}
-                                    <img src="{% static 'assets/images/testimonial-author-1.png' %}" alt="Profile" class="edit-avatar">
+                                    <img src="{% static 'assets/images/testimonial-author-1.png' %}" alt="{% trans "Profile" %}" class="edit-avatar">
                                 {% endif %}
                             </div>
                         </div>
                         <div class="edit-actions">
-                            <button type="submit" class="edit-btn">Save changes</button>
-                            <a href="/profile/" class="edit-link">Back to profile</a>
+                            <button type="submit" class="edit-btn">{% trans "Save changes" %}</button>
+                            <a href="/profile/" class="edit-link">{% trans "Back to profile" %}</a>
                         </div>
                     </form>
                 </div>

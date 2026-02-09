@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Sign Up{% endblock %}
+{% block title %}{% trans "Sign Up" %}{% endblock %}
 
 {% block css %}
 <style>
@@ -43,8 +44,8 @@
 <div class="col-lg-5 offset-lg-3">
 <div class="auth-card">
 
-<h1 class="auth-title">Sign Up</h1>
-<p class="auth-sub">Create your account to access Tunisian Sign Language tools.</p>
+<h1 class="auth-title">{% trans "Sign Up" %}</h1>
+<p class="auth-sub">{% trans "Create your account to access Tunisian Sign Language tools." %}</p>
 
 {% if error %}
   <div style="color:#b00020; margin-bottom:12px; font-weight:600;">{{ error }}</div>
@@ -54,61 +55,60 @@
   {% csrf_token %}
   <div class="auth-grid">
     <div class="auth-field">
-      <label class="auth-label" for="full_name">Full Name</label>
-      <input type="text" id="full_name" name="full_name" class="auth-input" placeholder="Full name" required>
+      <label class="auth-label" for="full_name">{% trans "Full name" %}</label>
+      <input type="text" id="full_name" name="full_name" class="auth-input" placeholder="{% trans "Full name" %}" required>
     </div>
     <div class="auth-field">
-      <label class="auth-label" for="email">Email</label>
-      <input type="email" id="email" name="email" class="auth-input" placeholder="Email address" required>
+      <label class="auth-label" for="email">{% trans "Email" %}</label>
+      <input type="email" id="email" name="email" class="auth-input" placeholder="{% trans "Email address" %}" required>
     </div>
     <div class="auth-field">
-      <label class="auth-label" for="phone">Phone</label>
-      <input type="tel" id="phone" name="phone" class="auth-input" placeholder="Phone number" required>
+      <label class="auth-label" for="phone">{% trans "Phone" %}</label>
+      <input type="tel" id="phone" name="phone" class="auth-input" placeholder="{% trans "Phone number" %}" required>
     </div>
     <div class="auth-field">
-      <label class="auth-label" for="profile_image">Profile Photo</label>
+      <label class="auth-label" for="profile_image">{% trans "Profile photo" %}</label>
       <input type="file" id="profile_image" name="profile_image" class="auth-input" accept="image/*">
     </div>
     <div class="auth-field">
-      <label class="auth-label" for="birth_date">Date of Birth</label>
+      <label class="auth-label" for="birth_date">{% trans "Date of birth" %}</label>
       <input type="date" id="birth_date" name="birth_date" class="auth-input" required>
     </div>
     <div class="auth-field">
-      <label class="auth-label" for="has_disability">Disability</label>
+      <label class="auth-label" for="has_disability">{% trans "Disability" %}</label>
       <select id="has_disability" name="has_disability" class="auth-input" required>
-        <option value="" disabled selected>Do you have a disability?</option>
-        <option value="yes">Yes</option>
-        <option value="no">No</option>
+        <option value="" disabled selected>{% trans "Do you have a disability?" %}</option>
+        <option value="yes">{% trans "Yes" %}</option>
+        <option value="no">{% trans "No" %}</option>
       </select>
     </div>
     <div class="auth-field" id="disability-type-field">
-      <label class="auth-label" for="disability_type">Disability Type</label>
-      <input type="text" id="disability_type" name="disability_type" class="auth-input" placeholder="Disability type (if yes)">
+      <label class="auth-label" for="disability_type">{% trans "Disability type" %}</label>
+      <input type="text" id="disability_type" name="disability_type" class="auth-input" placeholder="{% trans "Disability type (if yes)" %}">
     </div>
     <div class="auth-field">
-      <label class="auth-label" for="password">Password</label>
-      <input type="password" id="password" name="password" class="auth-input" placeholder="Password" required>
+      <label class="auth-label" for="password">{% trans "Password" %}</label>
+      <input type="password" id="password" name="password" class="auth-input" placeholder="{% trans "Password" %}" required>
     </div>
     <div class="auth-field">
-      <label class="auth-label" for="confirm_password">Confirm Password</label>
-      <input type="password" id="confirm_password" name="confirm_password" class="auth-input" placeholder="Confirm password" required>
+      <label class="auth-label" for="confirm_password">{% trans "Confirm password" %}</label>
+      <input type="password" id="confirm_password" name="confirm_password" class="auth-input" placeholder="{% trans "Confirm password" %}" required>
     </div>
   </div>
 
   <div class="auth-actions">
-    <button type="submit" class="auth-btn">Sign Up</button>
-    <a href="/signin/" class="auth-link">Already have an account?</a>
+    <button type="submit" class="auth-btn">{% trans "Sign Up" %}</button>
+    <a href="/signin/" class="auth-link">{% trans "Already have an account?" %}</a>
   </div>
   <div class="auth-footer">
-    <span>By creating an account, you agree to our terms.</span>
-    <span>Need help? Contact us.</span>
+    <span>{% trans "By creating an account, you agree to our terms." %}</span>
+    <span>{% trans "Need help? Contact us." %}</span>
   </div>
 </form>
 
 <hr style="margin:20px 0;">
 
-<button class="auth-btn" onclick="registerFaceID()">Enable Face ID</button>
-<div id="faceid-feedback"></div>
+
 
 </div>
 </div>
@@ -131,14 +131,14 @@ if (disabilitySelect && disabilityField) {
     disabilitySelect.addEventListener('change', toggleDisabilityField);
 }
 
-// Face ID / WebAuthn
+// Face ID / WebAuthn (device-based registration)
 async function registerFaceID() {
     const feedback = document.getElementById("faceid-feedback");
-    feedback.innerText = "⏳ Preparing Face ID registration...";
+    feedback.innerText = "{% trans "Preparing Face ID registration..." %}";
 
     try {
         const res = await fetch("/webauthn/begin-register/");
-        if (!res.ok) throw new Error("Failed to fetch registration options");
+        if (!res.ok) throw new Error("{% trans "Failed to fetch registration options" %}");
 
         const options = await res.json();
         options.challenge = Uint8Array.from(atob(options.challenge), c => c.charCodeAt(0));
@@ -154,14 +154,14 @@ async function registerFaceID() {
 
         if (finishRes.ok) {
             feedback.style.color = "green";
-            feedback.innerText = "✅ Face ID enabled successfully!";
+            feedback.innerText = "{% trans "Face ID enabled successfully!" %}";
         } else {
             feedback.style.color = "red";
-            feedback.innerText = "❌ Face ID registration failed.";
+            feedback.innerText = "{% trans "Face ID registration failed." %}";
         }
     } catch(err) {
         feedback.style.color = "red";
-        feedback.innerText = "❌ " + err.message;
+        feedback.innerText = "" + err.message;
         console.error(err);
     }
 }

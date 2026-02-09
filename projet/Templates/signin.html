@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Sign In{% endblock %}
+{% block title %}{% trans "Sign In" %}{% endblock %}
 
 {% block css %}
 <style>
@@ -13,6 +14,46 @@
 .auth-actions { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-top:10px;}
 .auth-btn { background:#f4511e; color:#fff; border:0; border-radius:12px; padding:10px 16px; font-weight:600;}
 .auth-link { color:#f4511e; text-decoration:none; font-weight:600;}
+.face-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(16, 18, 26, 0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+.face-modal.is-open { display: flex; }
+.face-modal-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 18px;
+    width: min(520px, 92vw);
+    box-shadow: 0 24px 50px rgba(16, 18, 26, 0.18);
+}
+.face-modal-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+.face-video {
+    width: 100%;
+    border-radius: 12px;
+    background: #10121a;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+}
+.face-modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 12px;
+}
+.face-secondary-btn {
+    background: #ffffff;
+    color: #10121a;
+    border: 1px solid rgba(16, 18, 26, 0.2);
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-weight: 600;
+}
+.face-hint { color: rgba(16, 18, 26, 0.65); font-size: 12px; margin-top: 8px; }
 </style>
 {% endblock %}
 
@@ -22,8 +63,8 @@
 <div class="row">
 <div class="col-lg-5 offset-lg-3">
 <div class="auth-card">
-<h1 class="auth-title">Sign In</h1>
-<p class="auth-sub">Sign in to access Tunisian Sign Language tools.</p>
+<h1 class="auth-title">{% trans "Sign In" %}</h1>
+<p class="auth-sub">{% trans "Sign in to access Tunisian Sign Language tools." %}</p>
 
 {% if error %}
   <div style="color:#b00020; margin-bottom:12px; font-weight:600;">{{ error }}</div>
@@ -31,18 +72,16 @@
 
 <form method="post">
   {% csrf_token %}
-  <input type="email" name="email" class="auth-input" placeholder="Email address" required>
-  <input type="password" name="password" class="auth-input" placeholder="Password" required>
+    <input type="email" name="email" class="auth-input" placeholder="{% trans "Email address" %}" required>
+    <input type="password" name="password" class="auth-input" placeholder="{% trans "Password" %}" required>
   <div class="auth-actions">
-    <button type="submit" class="auth-btn">Sign In</button>
-    <a href="/signup/" class="auth-link">Create an account</a>
+    <button type="submit" class="auth-btn">{% trans "Sign In" %}</button>
+    <a href="/signup/" class="auth-link">{% trans "Create an account" %}</a>
   </div>
 </form>
 
 <hr style="margin:20px 0;">
 
-<button type="button" id="faceIdLogin" class="auth-btn" style="background:#0f7c7f;">Login with Face ID</button>
-<div id="faceIdMessage" style="margin-top:10px; font-weight:600;"></div>
 
 </div>
 </div>
@@ -53,6 +92,7 @@
 
 {% block extra_js %}
 <script>
+    // Read the CSRF cookie for POST requests.
     function getCookie(name) {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);
@@ -60,24 +100,46 @@
         return null;
     }
 
-    function bufferToBase64url(buffer) {
-        const bytes = new Uint8Array(buffer);
-        let binary = "";
-        bytes.forEach((b) => binary += String.fromCharCode(b));
-        return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
-    }
-
-    function base64urlToBuffer(value) {
-        const base64 = value.replace(/-/g, "+").replace(/_/g, "/");
-        const pad = base64.length % 4 ? "=".repeat(4 - (base64.length % 4)) : "";
-        const binary = atob(base64 + pad);
-        const bytes = new Uint8Array(binary.length);
-        for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-        return bytes.buffer;
-    }
-
     const faceBtn = document.getElementById("faceIdLogin");
     const faceMsg = document.getElementById("faceIdMessage");
+    const faceModal = document.getElementById("faceModal");
+    const faceVideo = document.getElementById("faceVideo");
+    const faceCanvas = document.getElementById("faceCanvas");
+    const faceCancel = document.getElementById("faceCancel");
+    const faceCapture = document.getElementById("faceCapture");
+    let faceStream = null;
+
+    // Open the front camera for live capture.
+    async function startFaceCamera() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            throw new Error("{% trans "Camera access is not supported in this browser." %}");
+        }
+        faceStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
+        faceVideo.srcObject = faceStream;
+        await faceVideo.play();
+    }
+
+    // Stop camera stream when the modal closes.
+    function stopFaceCamera() {
+        if (faceStream) {
+            faceStream.getTracks().forEach((track) => track.stop());
+            faceStream = null;
+        }
+        faceVideo.srcObject = null;
+    }
+
+    // Show capture modal.
+    function openFaceModal() {
+        faceModal.classList.add("is-open");
+        faceModal.setAttribute("aria-hidden", "false");
+    }
+
+    // Hide capture modal and cleanup.
+    function closeFaceModal() {
+        faceModal.classList.remove("is-open");
+        faceModal.setAttribute("aria-hidden", "true");
+        stopFaceCamera();
+    }
 
     if (faceBtn) {
         faceBtn.addEventListener("click", async () => {
@@ -85,62 +147,61 @@
             const emailField = document.querySelector("input[name='email']");
             const email = emailField ? emailField.value.trim() : "";
             if (!email) {
-                faceMsg.textContent = "Enter your email first.";
+                faceMsg.textContent = "{% trans "Enter your email first." %}";
                 faceMsg.style.color = "#b00020";
                 return;
             }
+            try {
+                openFaceModal();
+                await startFaceCamera();
+            } catch (err) {
+                faceMsg.textContent = err.message || "{% trans "Unable to open camera." %}";
+                faceMsg.style.color = "#b00020";
+                closeFaceModal();
+            }
+        });
+    }
+
+    if (faceCancel) {
+        faceCancel.addEventListener("click", () => {
+            closeFaceModal();
+        });
+    }
+
+    if (faceCapture) {
+        faceCapture.addEventListener("click", async () => {
+            const emailField = document.querySelector("input[name='email']");
+            const email = emailField ? emailField.value.trim() : "";
+            if (!email) {
+                faceMsg.textContent = "{% trans "Enter your email first." %}";
+                faceMsg.style.color = "#b00020";
+                closeFaceModal();
+                return;
+            }
+
+            faceCapture.disabled = true;
+            faceMsg.textContent = "{% trans "Verifying face..." %}";
+            faceMsg.style.color = "#10121a";
 
             try {
+                const width = faceVideo.videoWidth || 640;
+                const height = faceVideo.videoHeight || 480;
+                faceCanvas.width = width;
+                faceCanvas.height = height;
+                // Capture a still frame and send to the server for verification.
+                const ctx = faceCanvas.getContext("2d");
+                ctx.drawImage(faceVideo, 0, 0, width, height);
+                const imageData = faceCanvas.toDataURL("image/jpeg", 0.9);
+
                 const csrfToken = getCookie("csrftoken");
-                const optionsRes = await fetch("/webauthn/authenticate/options/", {
+                const verifyRes = await fetch("/face/verify/", {
                     method: "POST",
                     credentials: "same-origin",
                     headers: {
                         "Content-Type": "application/json",
                         "X-CSRFToken": csrfToken
                     },
-                    body: JSON.stringify({ email })
-                });
-                const options = await optionsRes.json();
-                if (options.error) {
-                    faceMsg.textContent = options.error;
-                    faceMsg.style.color = "#b00020";
-                    return;
-                }
-
-                options.challenge = base64urlToBuffer(options.challenge);
-                if (options.allowCredentials) {
-                    options.allowCredentials = options.allowCredentials.map((cred) => ({
-                        ...cred,
-                        id: base64urlToBuffer(cred.id)
-                    }));
-                }
-
-                const assertion = await navigator.credentials.get({ publicKey: options });
-                if (!assertion) {
-                    throw new Error("No credential returned.");
-                }
-
-                const payload = {
-                    id: assertion.id,
-                    rawId: bufferToBase64url(assertion.rawId),
-                    type: assertion.type,
-                    response: {
-                        clientDataJSON: bufferToBase64url(assertion.response.clientDataJSON),
-                        authenticatorData: bufferToBase64url(assertion.response.authenticatorData),
-                        signature: bufferToBase64url(assertion.response.signature),
-                        userHandle: assertion.response.userHandle ? bufferToBase64url(assertion.response.userHandle) : null
-                    }
-                };
-
-                const verifyRes = await fetch("/webauthn/authenticate/verify/", {
-                    method: "POST",
-                    credentials: "same-origin",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRFToken": csrfToken
-                    },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({ email, image: imageData })
                 });
                 const verify = await verifyRes.json();
                 if (verify.error) {
@@ -151,8 +212,11 @@
 
                 window.location.href = "/";
             } catch (err) {
-                faceMsg.textContent = err.message || "Face ID login failed.";
+                faceMsg.textContent = err.message || "{% trans "Face verification failed." %}";
                 faceMsg.style.color = "#b00020";
+            } finally {
+                faceCapture.disabled = false;
+                closeFaceModal();
             }
         });
     }

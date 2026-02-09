@@ -16,6 +16,11 @@ urlpatterns = [
     path('webauthn/register/verify/', views.webauthn_register_verify, name='webauthn_register_verify'),
     path('webauthn/authenticate/options/', views.webauthn_authenticate_options, name='webauthn_authenticate_options'),
     path('webauthn/authenticate/verify/', views.webauthn_authenticate_verify, name='webauthn_authenticate_verify'),
+    path('face/verify/', views.face_verify, name='face_verify'),  # Face recognition login endpoint.
     path('reclamation/', views.submit_reclamation, name='reclamation'),
     path('api/animation/', views.get_animation, name='get_animation'),
+    path('backoffice/events/', views.backoffice_events, name='backoffice_events'),
+    path('backoffice/users/', views.backoffice_users, name='backoffice_users'),
+    path('backoffice/reclamations/', views.backoffice_reclamations, name='backoffice_reclamations'),
+
 ]

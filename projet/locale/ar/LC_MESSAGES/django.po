@@ -1,0 +1,821 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-08 09:58+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#: .\Templates\avatar.html:7
+msgid "3D Avatar"
+msgstr ""
+
+#: .\Templates\avatar.html:59
+msgid "Error: unable to load Animated_Woman.glb"
+msgstr ""
+
+#: .\Templates\base.html:16
+msgid "Lava Landing Page HTML Template"
+msgstr ""
+
+#: .\Templates\base.html:298
+msgid "Skip to main content"
+msgstr "تخطي إلى المحتوى الرئيسي"
+
+#: .\Templates\base.html:305
+msgid "TunSign"
+msgstr ""
+
+#: .\Templates\base.html:307
+msgid "Home"
+msgstr "الرئيسية"
+
+#: .\Templates\base.html:308 .\Templates\base.html:425
+msgid "About"
+msgstr "حول"
+
+#: .\Templates\base.html:309 .\Templates\index.html:52
+#: .\Templates\index.html:67 .\Templates\index.html:82
+msgid "Transcribe"
+msgstr "تفريغ"
+
+#: .\Templates\base.html:310 .\Templates\learning.html:5
+msgid "Learning"
+msgstr "التعلم"
+
+#: .\Templates\base.html:312 .\Templates\base.html:329
+msgid "View profile"
+msgstr "عرض الملف الشخصي"
+
+#: .\Templates\base.html:313 .\Templates\base.html:330
+msgid "Sign out"
+msgstr "تسجيل الخروج"
+
+#: .\Templates\base.html:320
+msgid "Open profile menu"
+msgstr "افتح قائمة الملف الشخصي"
+
+#: .\Templates\base.html:322 .\Templates\base.html:324
+#: .\Templates\edit_profile.html:166 .\Templates\edit_profile.html:168
+#: .\Templates\profile.html:5 .\Templates\profile.html:201
+#: .\Templates\profile.html:203 .\Templates\profile.html:206
+msgid "Profile"
+msgstr "الملف الشخصي"
+
+#: .\Templates\base.html:339
+msgid "Language"
+msgstr ""
+
+#: .\Templates\base.html:345
+msgid "Sign in"
+msgstr "تسجيل الدخول"
+
+#: .\Templates\base.html:346
+msgid "Sign up"
+msgstr "إنشاء حساب"
+
+#: .\Templates\base.html:350
+msgid "Menu"
+msgstr "القائمة"
+
+#: .\Templates\base.html:384 .\Templates\base.html:385
+#: .\Templates\edit_profile.html:132 .\Templates\home.html:236
+#: .\Templates\profile.html:231 .\Templates\signup.html:58
+#: .\Templates\signup.html:59
+msgid "Full name"
+msgstr ""
+
+#: .\Templates\base.html:391 .\Templates\base.html:392
+#: .\Templates\home.html:242 .\Templates\signin.html:75
+#: .\Templates\signup.html:63
+msgid "Email address"
+msgstr ""
+
+#: .\Templates\base.html:398 .\Templates\base.html:399
+#: .\Templates\base.html:400
+msgid "Message type"
+msgstr ""
+
+#: .\Templates\base.html:401
+msgid "Recommendation"
+msgstr ""
+
+#: .\Templates\base.html:402
+msgid "Alert"
+msgstr ""
+
+#: .\Templates\base.html:403
+msgid "Complaint"
+msgstr ""
+
+#: .\Templates\base.html:409 .\Templates\base.html:410
+#: .\Templates\home.html:248
+msgid "Your message"
+msgstr ""
+
+#: .\Templates\base.html:416
+msgid "Send"
+msgstr ""
+
+#: .\Templates\base.html:425
+msgid "the platform"
+msgstr ""
+
+#: .\Templates\base.html:426
+msgid ""
+"Voice-to-Sign is built for Tunisian Sign Language (TSL). It helps convert "
+"speech into text and display signs to support communication and learning."
+msgstr ""
+
+#: .\Templates\base.html:427
+msgid "To contact us or share an idea, use this form."
+msgstr ""
+
+#: .\Templates\base.html:429
+msgid "Facebook"
+msgstr ""
+
+#: .\Templates\base.html:430
+msgid "Twitter"
+msgstr ""
+
+#: .\Templates\base.html:431
+msgid "LinkedIn"
+msgstr ""
+
+#: .\Templates\base.html:432
+msgid "RSS"
+msgstr ""
+
+#: .\Templates\base.html:433
+msgid "Dribbble"
+msgstr ""
+
+#: .\Templates\base.html:441
+msgid "Copyright"
+msgstr ""
+
+#: .\Templates\base.html:443
+msgid "Designed by"
+msgstr ""
+
+#: .\Templates\edit_profile.html:5 .\Templates\edit_profile.html:118
+#: .\Templates\profile.html:215
+#, fuzzy
+#| msgid "View profile"
+msgid "Edit profile"
+msgstr "عرض الملف الشخصي"
+
+#: .\Templates\edit_profile.html:119
+msgid "Update your personal details and profile photo."
+msgstr ""
+
+#: .\Templates\edit_profile.html:136 .\Templates\profile.html:235
+#: .\Templates\signup.html:62
+msgid "Email"
+msgstr ""
+
+#: .\Templates\edit_profile.html:140 .\Templates\profile.html:239
+#: .\Templates\signup.html:66
+msgid "Phone"
+msgstr ""
+
+#: .\Templates\edit_profile.html:144 .\Templates\profile.html:243
+#: .\Templates\signup.html:74
+msgid "Date of birth"
+msgstr ""
+
+#: .\Templates\edit_profile.html:148 .\Templates\profile.html:220
+#: .\Templates\signup.html:78
+msgid "Disability"
+msgstr ""
+
+#: .\Templates\edit_profile.html:150 .\Templates\signup.html:80
+msgid "Do you have a disability?"
+msgstr ""
+
+#: .\Templates\edit_profile.html:151 .\Templates\profile.html:221
+#: .\Templates\signup.html:81
+msgid "Yes"
+msgstr ""
+
+#: .\Templates\edit_profile.html:152 .\Templates\profile.html:221
+#: .\Templates\signup.html:82
+msgid "No"
+msgstr ""
+
+#: .\Templates\edit_profile.html:156 .\Templates\profile.html:224
+#: .\Templates\signup.html:86
+msgid "Disability type"
+msgstr ""
+
+#: .\Templates\edit_profile.html:157 .\Templates\signup.html:87
+msgid "Disability type (if yes)"
+msgstr ""
+
+#: .\Templates\edit_profile.html:160 .\Templates\signup.html:70
+#, fuzzy
+#| msgid "Profile"
+msgid "Profile photo"
+msgstr "الملف الشخصي"
+
+#: .\Templates\edit_profile.html:164
+msgid "Current photo"
+msgstr ""
+
+#: .\Templates\edit_profile.html:173
+msgid "Save changes"
+msgstr ""
+
+#: .\Templates\edit_profile.html:174 .\Templates\webauthn_register.html:73
+msgid "Back to profile"
+msgstr ""
+
+#: .\Templates\home.html:5
+msgid "Voice-to-Sign"
+msgstr "صوت إلى إشارة"
+
+#: .\Templates\home.html:32 .\Templates\index.html:25
+msgid "Turn"
+msgstr ""
+
+#: .\Templates\home.html:32 .\Templates\index.html:25
+msgid "speech"
+msgstr ""
+
+#: .\Templates\home.html:32 .\Templates\index.html:25
+msgid "into Tunisian Sign Language"
+msgstr ""
+
+#: .\Templates\home.html:33
+msgid ""
+"Voice-to-Sign translates speech into Tunisian Sign Language (TSL) with an "
+"animated avatar to support communication."
+msgstr ""
+
+#: .\Templates\home.html:34 .\Templates\index.html:27
+msgid "Learn More"
+msgstr ""
+
+#: .\Templates\home.html:53 .\Templates\index.html:46
+msgid "Speech Recognition"
+msgstr ""
+
+#: .\Templates\home.html:55
+msgid "Capture speech and convert it to text for TSL."
+msgstr ""
+
+#: .\Templates\home.html:58
+msgid "Read More"
+msgstr ""
+
+#: .\Templates\home.html:69 .\Templates\index.html:63
+msgid "Text to TSL"
+msgstr ""
+
+#: .\Templates\home.html:70
+msgid "Turn words into a sequence of signs in TSL."
+msgstr ""
+
+#: .\Templates\home.html:72
+msgid "Discover More"
+msgstr ""
+
+#: .\Templates\home.html:83 .\Templates\index.html:78
+msgid "TSL Avatar"
+msgstr ""
+
+#: .\Templates\home.html:84
+msgid "An animated avatar performs signs for clear visual communication."
+msgstr ""
+
+#: .\Templates\home.html:86
+msgid "More Detail"
+msgstr ""
+
+#: .\Templates\home.html:104 .\Templates\index.html:100
+msgid "App"
+msgstr ""
+
+#: .\Templates\home.html:111 .\Templates\index.html:107
+msgid "TSL for Education"
+msgstr ""
+
+#: .\Templates\home.html:112
+msgid "Resources to learn TSL and support students and families in Tunisia."
+msgstr ""
+
+#: .\Templates\home.html:118 .\Templates\index.html:114
+msgid "TSL at Work"
+msgstr ""
+
+#: .\Templates\home.html:119
+msgid "A simple tool to support teams and make information accessible."
+msgstr ""
+
+#: .\Templates\home.html:125 .\Templates\index.html:121
+msgid "TSL for Public Services"
+msgstr ""
+
+#: .\Templates\home.html:126
+msgid "TSL support to help Deaf citizens access services and be understood."
+msgstr ""
+
+#: .\Templates\home.html:144 .\Templates\index.html:140
+msgid "Voices from the"
+msgstr ""
+
+#: .\Templates\home.html:144 .\Templates\index.html:140
+msgid "TSL Community"
+msgstr ""
+
+#: .\Templates\home.html:145 .\Templates\index.html:141
+msgid "Feedback from Tunisian Deaf community members, families, and educators."
+msgstr ""
+
+#: .\Templates\home.html:153 .\Templates\home.html:170
+#: .\Templates\home.html:187 .\Templates\home.html:202
+#: .\Templates\index.html:149 .\Templates\index.html:166
+#: .\Templates\index.html:183 .\Templates\index.html:198
+msgid "Author"
+msgstr ""
+
+#: .\Templates\home.html:164 .\Templates\index.html:160
+msgid ""
+"TSL is our daily language. This tool helps us share it with more people."
+msgstr ""
+
+#: .\Templates\home.html:165 .\Templates\index.html:161
+msgid "Student, Tunis"
+msgstr ""
+
+#: .\Templates\home.html:181 .\Templates\index.html:177
+msgid "A clear interface that keeps Tunisian Sign Language at the center."
+msgstr ""
+
+#: .\Templates\home.html:182 .\Templates\index.html:178
+msgid "TSL Trainer"
+msgstr ""
+
+#: .\Templates\home.html:196 .\Templates\index.html:192
+msgid "Finally, a local solution designed for the Tunisian Deaf community."
+msgstr ""
+
+#: .\Templates\home.html:197 .\Templates\index.html:193
+msgid "Parent"
+msgstr ""
+
+#: .\Templates\home.html:212 .\Templates\index.html:208
+msgid "TSL is becoming more accessible for everyone. This is real progress."
+msgstr ""
+
+#: .\Templates\home.html:213 .\Templates\index.html:209
+msgid "Local Association"
+msgstr ""
+
+#: .\Templates\home.html:254
+msgid "Send message"
+msgstr ""
+
+#: .\Templates\home.html:255
+msgid "now"
+msgstr ""
+
+#: .\Templates\index.html:26
+msgid ""
+"Voice-to-Sign is built around Tunisian Sign Language (TSL), helping the Deaf "
+"community and families communicate through a clear, local visual language."
+msgstr ""
+
+#: .\Templates\index.html:48
+msgid "Capture speech and convert it to text that can be expressed in TSL."
+msgstr ""
+
+#: .\Templates\index.html:49
+msgid ""
+"Designed for everyday Tunisian Arabic and French phrases used at home, "
+"school, and services."
+msgstr ""
+
+#: .\Templates\index.html:64
+msgid "Turn words into a sequence of Tunisian Sign Language signs."
+msgstr ""
+
+#: .\Templates\index.html:65
+msgid ""
+"The system emphasizes local signs and clear sequencing so learners can "
+"follow along."
+msgstr ""
+
+#: .\Templates\index.html:79
+msgid ""
+"An animated avatar performs Tunisian signs to make communication visual and "
+"clear."
+msgstr ""
+
+#: .\Templates\index.html:80
+msgid ""
+"It provides consistent, repeatable signing to support practice and "
+"accessibility."
+msgstr ""
+
+#: .\Templates\index.html:108
+msgid ""
+"Support learning with Tunisian Sign Language resources for students, "
+"teachers, and families."
+msgstr ""
+
+#: .\Templates\index.html:115
+msgid ""
+"Make workplaces in Tunisia more accessible with clear TSL communication."
+msgstr ""
+
+#: .\Templates\index.html:122
+msgid "Help citizens access services by adding Tunisian Sign Language support."
+msgstr ""
+
+#: .\Templates\learning.html:301
+msgid "Learning Mode - Sign Language"
+msgstr ""
+
+#: .\Templates\learning.html:305 .\Templates\transcribe.html:231
+msgid "Type a word (Arabic or Latin)"
+msgstr ""
+
+#: .\Templates\learning.html:306
+msgid "Choose word"
+msgstr ""
+
+#: .\Templates\learning.html:310
+msgid "Word"
+msgstr ""
+
+#: .\Templates\learning.html:311 .\Templates\transcribe.html:258
+#, fuzzy
+#| msgid "Sign out"
+msgid "Sign for"
+msgstr "تسجيل الخروج"
+
+#: .\Templates\learning.html:313
+msgid "I made the sign"
+msgstr ""
+
+#: .\Templates\learning.html:321
+msgid "Learning Tips & Videos"
+msgstr ""
+
+#: .\Templates\learning.html:324
+msgid "AMIDEAST Tunisia learning session"
+msgstr ""
+
+#: .\Templates\learning.html:325
+msgid "AMIDEAST Tunisia"
+msgstr ""
+
+#: .\Templates\learning.html:326
+msgid ""
+"AMIDEAST Tunisia hosts a group of young hearing-impaired learners in their "
+"first English session using Tunisian Sign Language."
+msgstr ""
+
+#: .\Templates\learning.html:327
+msgid ""
+"Ms. Manel Bergaoui initiated the program to make learning inclusive and "
+"accessible."
+msgstr ""
+
+#: .\Templates\learning.html:328 .\Templates\learning.html:334
+#: .\Templates\learning.html:340
+msgid "More information"
+msgstr ""
+
+#: .\Templates\learning.html:331
+msgid "Deaf association in Tunisia"
+msgstr ""
+
+#: .\Templates\learning.html:332
+msgid "Workplace Communication"
+msgstr ""
+
+#: .\Templates\learning.html:333
+msgid ""
+"Common workplace signs to help teams collaborate and share instructions "
+"clearly."
+msgstr ""
+
+#: .\Templates\learning.html:337
+msgid "Transport and travel in Tunisia"
+msgstr ""
+
+#: .\Templates\learning.html:338
+msgid "Transport & Travel"
+msgstr ""
+
+#: .\Templates\learning.html:339
+msgid ""
+"Useful signs for stations, tickets, directions, and daily transport in "
+"Tunisia."
+msgstr ""
+
+#: .\Templates\learning.html:346
+msgid "Upcoming Events"
+msgstr ""
+
+#: .\Templates\learning.html:349 .\Templates\learning.html:499
+msgid "TSL Basics Workshop"
+msgstr ""
+
+#: .\Templates\learning.html:350
+msgid "March 12, 2026 - Tunis"
+msgstr ""
+
+#: .\Templates\learning.html:351
+msgid "Intro session for families and educators to learn everyday TSL signs."
+msgstr ""
+
+#: .\Templates\learning.html:352 .\Templates\learning.html:358
+#: .\Templates\learning.html:364
+msgid "View details"
+msgstr ""
+
+#: .\Templates\learning.html:355 .\Templates\learning.html:500
+msgid "Inclusive Classroom Day"
+msgstr ""
+
+#: .\Templates\learning.html:356
+msgid "April 5, 2026 - Sousse"
+msgstr ""
+
+#: .\Templates\learning.html:357
+msgid "Activities and tips for supporting Deaf learners in Tunisian schools."
+msgstr ""
+
+#: .\Templates\learning.html:361 .\Templates\learning.html:501
+msgid "Transport Access Meetup"
+msgstr ""
+
+#: .\Templates\learning.html:362
+msgid "May 2, 2026 - Sfax"
+msgstr ""
+
+#: .\Templates\learning.html:363
+msgid ""
+"Community meetup focused on accessible travel and public transport signs."
+msgstr ""
+
+#: .\Templates\learning.html:370
+msgid "Events Map"
+msgstr ""
+
+#: .\Templates\learning.html:456
+msgid "Camera blocked or unavailable"
+msgstr ""
+
+#: .\Templates\learning.html:461
+msgid "Hand not detected"
+msgstr ""
+
+#: .\Templates\learning.html:466
+msgid "No reference for this word"
+msgstr ""
+
+#: .\Templates\learning.html:471
+msgid "Bravo!"
+msgstr ""
+
+#: .\Templates\learning.html:474
+msgid "Try again"
+msgstr ""
+
+#: .\Templates\learning.html:477
+msgid "Almost correct, adjust your sign"
+msgstr ""
+
+#: .\Templates\profile.html:207
+msgid "Your personal information."
+msgstr ""
+
+#: .\Templates\profile.html:211
+#, fuzzy
+#| msgid "Voice-to-Sign"
+msgid "Voice-to-Sign member"
+msgstr "صوت إلى إشارة"
+
+#: .\Templates\profile.html:212
+msgid "Tunisian Sign Language"
+msgstr ""
+
+#: .\Templates\profile.html:216
+msgid "Set up Face ID"
+msgstr ""
+
+#: .\Templates\signin.html:5 .\Templates\signin.html:66
+#: .\Templates\signin.html:78
+#, fuzzy
+#| msgid "Sign in"
+msgid "Sign In"
+msgstr "تسجيل الدخول"
+
+#: .\Templates\signin.html:67
+msgid "Sign in to access Tunisian Sign Language tools."
+msgstr ""
+
+#: .\Templates\signin.html:76 .\Templates\signup.html:90
+#: .\Templates\signup.html:91
+msgid "Password"
+msgstr ""
+
+#: .\Templates\signin.html:79
+msgid "Create an account"
+msgstr ""
+
+#: .\Templates\signin.html:85
+msgid "Login with Face ID"
+msgstr ""
+
+#: .\Templates\signin.html:90
+msgid "Face verification"
+msgstr ""
+
+#: .\Templates\signin.html:93
+msgid "Center your face in the frame and keep the camera steady."
+msgstr ""
+
+#: .\Templates\signin.html:95
+msgid "Cancel"
+msgstr ""
+
+#: .\Templates\signin.html:96
+msgid "Capture and verify"
+msgstr ""
+
+#: .\Templates\signin.html:130
+msgid "Camera access is not supported in this browser."
+msgstr ""
+
+#: .\Templates\signin.html:165 .\Templates\signin.html:191
+msgid "Enter your email first."
+msgstr ""
+
+#: .\Templates\signin.html:173
+msgid "Unable to open camera."
+msgstr ""
+
+#: .\Templates\signin.html:198
+msgid "Verifying face..."
+msgstr ""
+
+#: .\Templates\signin.html:230
+msgid "Face verification failed."
+msgstr ""
+
+#: .\Templates\signup.html:5 .\Templates\signup.html:47
+#: .\Templates\signup.html:100
+#, fuzzy
+#| msgid "Sign up"
+msgid "Sign Up"
+msgstr "إنشاء حساب"
+
+#: .\Templates\signup.html:48
+msgid "Create your account to access Tunisian Sign Language tools."
+msgstr ""
+
+#: .\Templates\signup.html:67
+msgid "Phone number"
+msgstr ""
+
+#: .\Templates\signup.html:94 .\Templates\signup.html:95
+msgid "Confirm password"
+msgstr ""
+
+#: .\Templates\signup.html:101
+msgid "Already have an account?"
+msgstr ""
+
+#: .\Templates\signup.html:104
+msgid "By creating an account, you agree to our terms."
+msgstr ""
+
+#: .\Templates\signup.html:105
+msgid "Need help? Contact us."
+msgstr ""
+
+#: .\Templates\signup.html:111
+msgid "Enable Face ID"
+msgstr ""
+
+#: .\Templates\signup.html:138
+msgid "Preparing Face ID registration..."
+msgstr ""
+
+#: .\Templates\signup.html:142
+msgid "Failed to fetch registration options"
+msgstr ""
+
+#: .\Templates\signup.html:158
+msgid "Face ID enabled successfully!"
+msgstr ""
+
+#: .\Templates\signup.html:161
+msgid "Face ID registration failed."
+msgstr ""
+
+#: .\Templates\transcribe.html:5
+#, fuzzy
+#| msgid "Voice-to-Sign"
+msgid "Voice-to-Text"
+msgstr "صوت إلى إشارة"
+
+#: .\Templates\transcribe.html:209
+msgid "Record Audio and Convert to Text"
+msgstr ""
+
+#: .\Templates\transcribe.html:210
+msgid "Start recording from the microphone, then send it for transcription."
+msgstr ""
+
+#: .\Templates\transcribe.html:213
+msgid "Start Recording"
+msgstr ""
+
+#: .\Templates\transcribe.html:214
+msgid "Stop Recording"
+msgstr ""
+
+#: .\Templates\transcribe.html:223
+msgid "Send Audio for Transcription"
+msgstr ""
+
+#: .\Templates\transcribe.html:228
+msgid "Or Type a Word"
+msgstr ""
+
+#: .\Templates\transcribe.html:233
+msgid "Show Sign"
+msgstr ""
+
+#: .\Templates\transcribe.html:249
+msgid "Extracted Text"
+msgstr ""
+
+#: .\Templates\transcribe.html:251
+msgid "Latin Transliteration"
+msgstr ""
+
+#: .\Templates\transcribe.html:254
+msgid "Sign Images"
+msgstr ""
+
+#: .\Templates\transcribe.html:316
+msgid "Recording finished. You can now send the audio."
+msgstr ""
+
+#: .\Templates\transcribe.html:322
+msgid "Recording in progress..."
+msgstr ""
+
+#: .\Templates\webauthn_register.html:5 .\Templates\webauthn_register.html:69
+#: .\Templates\webauthn_register.html:71
+msgid "Register Face ID"
+msgstr ""
+
+#: .\Templates\webauthn_register.html:70
+msgid "Secure your account with Face ID or a security key."
+msgstr ""
+
+#: .\Templates\webauthn_register.html:145
+msgid "No credential returned."
+msgstr ""
+
+#: .\Templates\webauthn_register.html:175
+msgid "Face ID registered successfully."
+msgstr ""
+
+#: .\Templates\webauthn_register.html:178
+msgid "Registration failed."
+msgstr ""
+
+#: .\projet\settings.py:35
+msgid "English"
+msgstr "الإنجليزية"
+
+#: .\projet\settings.py:36
+msgid "French"
+msgstr "الفرنسية"
+
+#: .\projet\settings.py:37
+msgid "Arabic"
+msgstr "العربية"

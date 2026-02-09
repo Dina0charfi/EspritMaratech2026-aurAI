@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Reclamation, UserProfile
+from .models import Event, Reclamation, UserProfile
 
 
 @admin.register(UserProfile)
@@ -15,3 +15,10 @@ class ReclamationAdmin(admin.ModelAdmin):
 	list_display = ("name", "email", "category", "created_at")
 	list_filter = ("category", "created_at")
 	search_fields = ("name", "email", "message")
+
+
+@admin.register(Event)
+class EventAdmin(admin.ModelAdmin):
+	list_display = ("name", "date", "location", "created_at")
+	list_filter = ("date", "created_at")
+	search_fields = ("name", "description", "location")

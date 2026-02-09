@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Learning{% endblock %}
+{% block title %}{% trans "Learning" %}{% endblock %}
 
 {% block css %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -250,6 +251,56 @@
         color: rgba(29, 26, 20, 0.5);
     }
 
+    .event-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(16, 18, 26, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    }
+
+    .event-modal.is-open {
+        display: flex;
+    }
+
+    .event-modal-card {
+        background: #ffffff;
+        border-radius: var(--radius-lg);
+        padding: 20px;
+        width: min(520px, 92vw);
+        box-shadow: var(--shadow);
+    }
+
+    .event-modal-title {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .event-modal-meta {
+        font-size: 13px;
+        color: rgba(29, 26, 20, 0.6);
+        margin-bottom: 10px;
+    }
+
+    .event-modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 14px;
+    }
+
+    .event-modal-btn {
+        background: #f4511e;
+        color: #ffffff;
+        border: 0;
+        border-radius: 12px;
+        padding: 8px 14px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
     .learning-map {
         margin-top: 60px;
         text-align: left;
@@ -297,19 +348,19 @@
 {% block content %}
 <section class="learning-page">
     <div class="container">
-        <h2>Learning Mode - Sign Language</h2>
+        <h2>{% trans "Learning Mode - Sign Language" %}</h2>
 
         <form method="post">
             {% csrf_token %}
-            <input type="text" name="word_input" placeholder="Type a word (Arabic or Latin)">
-            <button type="submit" class="learning-button">Choose word</button>
+            <input type="text" name="word_input" placeholder="{% trans "Type a word (Arabic or Latin)" %}">
+            <button type="submit" class="learning-button">{% trans "Choose word" %}</button>
         </form>
 
         {% if sign_image %}
-            <h3>Word: {{ word }}</h3>
-            <img src="{{ sign_image }}" class="learning-sign" alt="Sign for {{ word }}">
+            <h3>{% trans "Word" %}: {{ word }}</h3>
+            <img src="{{ sign_image }}" class="learning-sign" alt="{% trans "Sign for" %} {{ word }}">
             <div>
-                <button id="checkGesture" class="learning-button">I made the sign</button>
+                <button id="checkGesture" class="learning-button">{% trans "I made the sign" %}</button>
             </div>
 
             <video id="video" width="400" height="300" autoplay muted playsinline class="learning-video"></video>
@@ -317,60 +368,71 @@
         {% endif %}
 
         <div class="learning-cards">
-            <h3>Learning Tips & Videos</h3>
+            <h3>{% trans "Learning Tips & Videos" %}</h3>
             <div class="learning-cards-grid">
                 <div class="learning-card">
-                    <img src="{% static 'assets/images/ecole.jpg' %}" alt="AMIDEAST Tunisia learning session" class="learning-card-image">
-                    <h4>AMIDEAST Tunisia</h4>
-                    <p>AMIDEAST Tunisia hosts a group of young hearing-impaired learners in their first English session using Tunisian Sign Language.</p>
-                    <p>Ms. Manel Bergaoui initiated the program to make learning inclusive and accessible.</p>
-                    <a href="#">More information</a>
+                    <img src="{% static 'assets/images/ecole.jpg' %}" alt="{% trans "AMIDEAST Tunisia learning session" %}" class="learning-card-image">
+                    <h4>{% trans "AMIDEAST Tunisia" %}</h4>
+                    <p>{% trans "AMIDEAST Tunisia hosts a group of young hearing-impaired learners in their first English session using Tunisian Sign Language." %}</p>
+                    <p>{% trans "Ms. Manel Bergaoui initiated the program to make learning inclusive and accessible." %}</p>
+                    <a href="https://share.google/4py17L6yHNx0qklOu">{% trans "More information" %}</a>
                 </div>
                 <div class="learning-card">
-                    <img src="{% static 'assets/images/image.jpg' %}" alt="Deaf association in Tunisia" class="learning-card-image">
-                    <h4>Workplace Communication</h4>
-                    <p>Common workplace signs to help teams collaborate and share instructions clearly.</p>
-                    <a href="#">More information</a>
+                    <img src="{% static 'assets/images/image.jpg' %}" alt="{% trans "Deaf association in Tunisia" %}" class="learning-card-image">
+                    <h4>{% trans "Workplace Communication" %}</h4>
+                    <p>{% trans "Common workplace signs to help teams collaborate and share instructions clearly." %}</p>
+                    <a href="https://jamaity.org/opportunity/association-voix-sourds-tunisie-interpretes-langue-signes/">{% trans "More information" %}</a>
                 </div>
                 <div class="learning-card">
-                    <img src="{% static 'assets/images/transport.jpg' %}" alt="Transport and travel in Tunisia" class="learning-card-image">
-                    <h4>Transport & Travel</h4>
-                    <p>Useful signs for stations, tickets, directions, and daily transport in Tunisia.</p>
-                    <a href="#">More information</a>
+                    <img src="{% static 'assets/images/transport.jpg' %}" alt="{% trans "Transport and travel in Tunisia" %}" class="learning-card-image">
+                    <h4>{% trans "Transport & Travel" %}</h4>
+                    <p>{% trans "Useful signs for stations, tickets, directions, and daily transport in Tunisia." %}</p>
+                    <a href="https://floteuil.com/2026/01/27/voyager-sourd-les-outils-indispensables-pour-un-voyage-sans-stress/?srsltid=AfmBOopKB2Gs0-rihJnaxBpzBJXxkh6MlbYp9nIbgqBtH8cdQNCd2N1S">{% trans "More information" %}</a>
                 </div>
             </div>
         </div>
 
         <div class="learning-events">
-            <h3>Upcoming Events</h3>
+            <h3>{% trans "Upcoming Events" %}</h3>
             <div class="learning-events-grid">
                 <div class="learning-event" data-scroll-reveal="enter bottom move 20px over 0.6s after 0.1s">
-                    <h4>TSL Basics Workshop</h4>
-                    <div class="learning-event-meta">March 12, 2026 - Tunis</div>
-                    <p>Intro session for families and educators to learn everyday TSL signs.</p>
-                    <a href="#">View details</a>
+                    <h4>{% trans "TSL Basics Workshop" %}</h4>
+                    <div class="learning-event-meta">{% trans "March 12, 2026 - Tunis" %}</div>
+                    <p>{% trans "Intro session for families and educators to learn everyday TSL signs." %}</p>
+                    <a href="#" class="event-details" data-title="{% trans "TSL Basics Workshop" %}" data-meta="{% trans "March 12, 2026 - Tunis" %}" data-desc="{% trans "Intro session for families and educators to learn everyday TSL signs." %}">{% trans "View details" %}</a>
                 </div>
                 <div class="learning-event" data-scroll-reveal="enter bottom move 20px over 0.6s after 0.2s">
-                    <h4>Inclusive Classroom Day</h4>
-                    <div class="learning-event-meta">April 5, 2026 - Sousse</div>
-                    <p>Activities and tips for supporting Deaf learners in Tunisian schools.</p>
-                    <a href="#">View details</a>
+                    <h4>{% trans "Inclusive Classroom Day" %}</h4>
+                    <div class="learning-event-meta">{% trans "April 5, 2026 - Sousse" %}</div>
+                    <p>{% trans "Activities and tips for supporting Deaf learners in Tunisian schools." %}</p>
+                    <a href="#" class="event-details" data-title="{% trans "Inclusive Classroom Day" %}" data-meta="{% trans "April 5, 2026 - Sousse" %}" data-desc="{% trans "Activities and tips for supporting Deaf learners in Tunisian schools." %}">{% trans "View details" %}</a>
                 </div>
                 <div class="learning-event" data-scroll-reveal="enter bottom move 20px over 0.6s after 0.3s">
-                    <h4>Transport Access Meetup</h4>
-                    <div class="learning-event-meta">May 2, 2026 - Sfax</div>
-                    <p>Community meetup focused on accessible travel and public transport signs.</p>
-                    <a href="#">View details</a>
+                    <h4>{% trans "Transport Access Meetup" %}</h4>
+                    <div class="learning-event-meta">{% trans "May 2, 2026 - Sfax" %}</div>
+                    <p>{% trans "Community meetup focused on accessible travel and public transport signs." %}</p>
+                    <a href="#" class="event-details" data-title="{% trans "Transport Access Meetup" %}" data-meta="{% trans "May 2, 2026 - Sfax" %}" data-desc="{% trans "Community meetup focused on accessible travel and public transport signs." %}">{% trans "View details" %}</a>
                 </div>
             </div>
         </div>
 
         <div class="learning-map">
-            <h3>Events Map</h3>
+            <h3>{% trans "Events Map" %}</h3>
             <div id="events-map" ></div>
         </div>
     </div>
 </section>
+
+<div class="event-modal" id="eventModal" aria-hidden="true">
+    <div class="event-modal-card" role="dialog" aria-modal="true" aria-labelledby="eventModalTitle">
+        <div class="event-modal-title" id="eventModalTitle"></div>
+        <div class="event-modal-meta" id="eventModalMeta"></div>
+        <div id="eventModalDesc"></div>
+        <div class="event-modal-actions">
+            <button type="button" class="event-modal-btn" id="eventModalClose">{% trans "Close" %}</button>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -452,28 +514,28 @@
         });
         camera.start().catch(err => {
             console.error(err);
-            feedback.innerHTML = '❌ Camera blocked or unavailable';
+            feedback.innerHTML = '{% trans "Camera blocked or unavailable" %}';
         });
 
         checkBtn.onclick = () => {
             if (!lastDetected) {
-                feedback.innerHTML = '❌ Hand not detected';
+                feedback.innerHTML = '{% trans "Hand not detected" %}';
                 feedback.style.color = 'red';
                 return;
             }
             if (!Array.isArray(referenceLandmarks) || referenceLandmarks.length === 0) {
-                feedback.innerHTML = '❌ No reference for this word';
+                feedback.innerHTML = '{% trans "No reference for this word" %}';
                 feedback.style.color = 'red';
                 return;
             }
             if (lastGestureOk) {
-                feedback.innerHTML = '✅ Bravo !';
+                feedback.innerHTML = '{% trans "Bravo!" %}';
                 feedback.style.color = 'green';
             } else if (lastScore > 0.25) {
-                feedback.innerHTML = '❌ Try again';
+                feedback.innerHTML = '{% trans "Try again" %}';
                 feedback.style.color = 'red';
             } else {
-                feedback.innerHTML = '⚠️ Almost correct, adjust your sign';
+                feedback.innerHTML = '{% trans "Almost correct, adjust your sign" %}';
                 feedback.style.color = 'orange';
             }
         };
@@ -484,6 +546,43 @@
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById("eventModal");
+    const modalTitle = document.getElementById("eventModalTitle");
+    const modalMeta = document.getElementById("eventModalMeta");
+    const modalDesc = document.getElementById("eventModalDesc");
+    const modalClose = document.getElementById("eventModalClose");
+    const detailLinks = document.querySelectorAll(".event-details");
+
+    function openModal(title, meta, desc) {
+        modalTitle.textContent = title || "";
+        modalMeta.textContent = meta || "";
+        modalDesc.textContent = desc || "";
+        modal.classList.add("is-open");
+        modal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeModal() {
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
+    }
+
+    detailLinks.forEach((link) => {
+        link.addEventListener("click", (event) => {
+            event.preventDefault();
+            openModal(link.dataset.title, link.dataset.meta, link.dataset.desc);
+        });
+    });
+
+    if (modalClose) {
+        modalClose.addEventListener("click", closeModal);
+    }
+
+    modal.addEventListener("click", (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
     const mapEl = document.getElementById('events-map');
     if (!mapEl) return;
 
@@ -495,9 +594,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }).addTo(map);
 
     const events = [
-        { title: 'TSL Basics Workshop', coords: [36.8065, 10.1815] },
-        { title: 'Inclusive Classroom Day', coords: [35.8245, 10.6346] },
-        { title: 'Transport Access Meetup', coords: [34.7406, 10.7603] }
+        { title: '{% trans "TSL Basics Workshop" %}', coords: [36.8065, 10.1815] },
+        { title: '{% trans "Inclusive Classroom Day" %}', coords: [35.8245, 10.6346] },
+        { title: '{% trans "Transport Access Meetup" %}', coords: [34.7406, 10.7603] }
     ];
 
     events.forEach(e => {

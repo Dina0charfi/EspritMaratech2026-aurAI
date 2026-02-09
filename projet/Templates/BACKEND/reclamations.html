@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Backoffice - Reclamations" %}{% endblock %}
+
+{% block css %}
+<style>
+    .backoffice-page {
+        padding-top: 150px;
+        padding-bottom: 90px;
+        background: radial-gradient(900px 400px at 10% -10%, #ffe1c4 0%, transparent 60%),
+                    radial-gradient(800px 420px at 90% 0%, #d9fff7 0%, transparent 55%),
+                    linear-gradient(180deg, #fffaf4 0%, #ffffff 100%);
+    }
+
+    .backoffice-card {
+        background: rgba(255, 255, 255, 0.94);
+        border-radius: 22px;
+        padding: 28px;
+        border: 1px solid rgba(16, 18, 26, 0.12);
+        box-shadow: 0 24px 50px rgba(16, 18, 26, 0.12);
+        backdrop-filter: blur(10px);
+    }
+
+    .backoffice-title {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .backoffice-table {
+        width: 100%;
+        margin-top: 16px;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+
+    .backoffice-table th,
+    .backoffice-table td {
+        border-bottom: 1px solid rgba(16, 18, 26, 0.12);
+        padding: 10px 8px;
+        text-align: left;
+        vertical-align: top;
+        word-break: break-word;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="backoffice-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="backoffice-card">
+                    <h1 class="backoffice-title">{% trans "Reclamations" %}</h1>
+                    <table class="backoffice-table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Name" %}</th>
+                                <th>{% trans "Email" %}</th>
+                                <th>{% trans "Category" %}</th>
+                                <th>{% trans "Message" %}</th>
+                                <th>{% trans "Created" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in reclamations %}
+                                <tr>
+                                    <td>{{ item.name }}</td>
+                                    <td>{{ item.email }}</td>
+                                    <td>{{ item.category }}</td>
+                                    <td>{{ item.message }}</td>
+                                    <td>{{ item.created_at }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="5">{% trans "No reclamations found." %}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

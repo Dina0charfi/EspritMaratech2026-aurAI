@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 
 {% block content %}
 
@@ -21,9 +22,9 @@
                 <div class="row">
                     <div class="left-text col-lg-6 col-md-12 col-sm-12 col-xs-12"
                         data-scroll-reveal="enter left move 30px over 0.6s after 0.4s">
-                        <h1>Turn <em>speech</em> into Tunisian Sign Language</h1>
-                        <p>Voice-to-Sign is built around Tunisian Sign Language (TSL), helping the Deaf community and families communicate through a clear, local visual language.</p>
-                        <a href="#about" class="main-button-slider">Learn More</a>
+                        <h1>{% trans "Turn" %} <em>{% trans "speech" %}</em> {% trans "into Tunisian Sign Language" %}</h1>
+                        <p>{% trans "Voice-to-Sign is built around Tunisian Sign Language (TSL), helping the Deaf community and families communicate through a clear, local visual language." %}</p>
+                        <a href="#about" class="main-button-slider">{% trans "Learn More" %}</a>
                     </div>
                 </div>
             </div>
@@ -42,13 +43,13 @@
                         <div class="features-icon">
                             <h2>01</h2>
                             <img src="{% static 'assets/images/features-icon-1.png' %}" alt="">
-                            <h4>Speech Recognition</h4>
+                            <h4>{% trans "Speech Recognition" %}</h4>
 
-                            <p>Capture speech and convert it to text that can be expressed in TSL.</p>
-                            <p>Designed for everyday Tunisian Arabic and French phrases used at home, school, and services.</p>
+                            <p>{% trans "Capture speech and convert it to text that can be expressed in TSL." %}</p>
+                            <p>{% trans "Designed for everyday Tunisian Arabic and French phrases used at home, school, and services." %}</p>
 
                             <a href="/transcribe/" class="main-button">
-                                Transcribe
+                                {% trans "Transcribe" %}
                             </a>
                         </div>
                     </div>
@@ -59,11 +60,11 @@
                         <div class="features-icon">
                             <h2>02</h2>
                             <img src="{% static 'assets/images/features-icon-2.png' %}" alt="">
-                            <h4>Text to TSL</h4>
-                            <p>Turn words into a sequence of Tunisian Sign Language signs.</p>
-                            <p>The system emphasizes local signs and clear sequencing so learners can follow along.</p>
+                            <h4>{% trans "Text to TSL" %}</h4>
+                            <p>{% trans "Turn words into a sequence of Tunisian Sign Language signs." %}</p>
+                            <p>{% trans "The system emphasizes local signs and clear sequencing so learners can follow along." %}</p>
                             <a href="/transcribe/" class="main-button">
-                                Transcribe
+                                {% trans "Transcribe" %}
                             </a>
                         </div>
                     </div>
@@ -74,11 +75,11 @@
                         <div class="features-icon">
                             <h2>03</h2>
                             <img src="{% static 'assets/images/features-icon-3.png' %}" alt="">
-                            <h4>TSL Avatar</h4>
-                            <p>An animated avatar performs Tunisian signs to make communication visual and clear.</p>
-                            <p>It provides consistent, repeatable signing to support practice and accessibility.</p>
+                            <h4>{% trans "TSL Avatar" %}</h4>
+                            <p>{% trans "An animated avatar performs Tunisian signs to make communication visual and clear." %}</p>
+                            <p>{% trans "It provides consistent, repeatable signing to support practice and accessibility." %}</p>
                             <a href="/transcribe/" class="main-button">
-                                Transcribe
+                                {% trans "Transcribe" %}
                             </a>
                         </div>
                     </div>
@@ -96,29 +97,29 @@
             <div class="row">
                 <div class="left-image col-lg-5 col-md-12 col-sm-12 mobile-bottom-fix-big"
                     data-scroll-reveal="enter left move 30px over 0.6s after 0.4s">
-                    <img src="{% static 'assets/images/left-image.png' %}" class="rounded img-fluid d-block mx-auto" alt="App">
+                    <img src="{% static 'assets/images/left-image.png' %}" class="rounded img-fluid d-block mx-auto" alt="{% trans "App" %}">
                 </div>
                 <div class="right-text offset-lg-1 col-lg-6 col-md-12 col-sm-12 mobile-bottom-fix">
                     <ul>
                         <li data-scroll-reveal="enter right move 30px over 0.6s after 0.4s">
                             <img src="{% static 'assets/images/about-icon-01.png' %}" alt="">
                             <div class="text">
-                                <h4>TSL for Education</h4>
-                                <p>Support learning with Tunisian Sign Language resources for students, teachers, and families.</p>
+                                <h4>{% trans "TSL for Education" %}</h4>
+                                <p>{% trans "Support learning with Tunisian Sign Language resources for students, teachers, and families." %}</p>
                             </div>
                         </li>
                         <li data-scroll-reveal="enter right move 30px over 0.6s after 0.5s">
                             <img src="{% static 'assets/images/about-icon-02.png' %}" alt="">
                             <div class="text">
-                                <h4>TSL at Work</h4>
-                                <p>Make workplaces in Tunisia more accessible with clear TSL communication.</p>
+                                <h4>{% trans "TSL at Work" %}</h4>
+                                <p>{% trans "Make workplaces in Tunisia more accessible with clear TSL communication." %}</p>
                             </div>
                         </li>
                         <li data-scroll-reveal="enter right move 30px over 0.6s after 0.6s">
                             <img src="{% static 'assets/images/about-icon-03.png' %}" alt="">
                             <div class="text">
-                                <h4>TSL for Public Services</h4>
-                                <p>Help citizens access services by adding Tunisian Sign Language support.</p>
+                                <h4>{% trans "TSL for Public Services" %}</h4>
+                                <p>{% trans "Help citizens access services by adding Tunisian Sign Language support." %}</p>
                             </div>
                         </li>
                     </ul>
@@ -136,8 +137,8 @@
             <div class="row">
                 <div class="col-lg-8 offset-lg-2">
                     <div class="center-heading">
-                        <h2>Voices from the <em>TSL Community</em></h2>
-                        <p>Feedback from Tunisian Deaf community members, families, and educators.</p>
+                        <h2>{% trans "Voices from the" %} <em>{% trans "TSL Community" %}</em></h2>
+                        <p>{% trans "Feedback from Tunisian Deaf community members, families, and educators." %}</p>
                     </div>
                 </div>
                 <div class="col-lg-10 col-md-12 col-sm-12 mobile-bottom-fix-big"
@@ -145,7 +146,7 @@
                     <div class="owl-carousel owl-theme">
                         <div class="item service-item">
                             <div class="author">
-                                <i><img src="{% static 'assets/images/testimonial-author-1.png' %}" alt="Author One"></i>
+                                <i><img src="{% static 'assets/images/testimonial-author-1.png' %}" alt="{% trans "Author" %}"></i>
                             </div>
                             <div class="testimonial-content">
                                 <ul class="stars">
@@ -156,13 +157,13 @@
                                     <li><i class="fa fa-star"></i></li>
                                 </ul>
                                 <h4>Amira K.</h4>
-                                <p>"TSL is our daily language. This tool helps us share it with more people."</p>
-                                <span>Student, Tunis</span>
+                                <p>{% trans "TSL is our daily language. This tool helps us share it with more people." %}</p>
+                                <span>{% trans "Student, Tunis" %}</span>
                             </div>
                         </div>
                         <div class="item service-item">
                             <div class="author">
-                                <i><img src="{% static 'assets/images/testimonial-author-1.png' %}" alt="Second Author"></i>
+                                <i><img src="{% static 'assets/images/testimonial-author-1.png' %}" alt="{% trans "Author" %}"></i>
                             </div>
                             <div class="testimonial-content">
                                 <ul class="stars">
@@ -173,13 +174,13 @@
                                     <li><i class="fa fa-star"></i></li>
                                 </ul>
                                 <h4>Walid S.</h4>
-                                <p>"A clear interface that keeps Tunisian Sign Language at the center."</p>
-                                <span>TSL Trainer</span>
+                                <p>{% trans "A clear interface that keeps Tunisian Sign Language at the center." %}</p>
+                                <span>{% trans "TSL Trainer" %}</span>
                             </div>
                         </div>
                         <div class="item service-item">
                             <div class="author">
-                                <i><img src="{% static 'assets/images/testimonial-author-1.png' %}" alt="Author Third"></i>
+                                <i><img src="{% static 'assets/images/testimonial-author-1.png' %}" alt="{% trans "Author" %}"></i>
                             </div>
                             <div class="testimonial-content">
                                 <ul class="stars">
@@ -188,13 +189,13 @@
                                     <li><i class="fa fa-star"></i></li>
                                 </ul>
                                 <h4>Hanen B.</h4>
-                                <p>"Finally, a local solution designed for the Tunisian Deaf community."</p>
-                                <span>Parent</span>
+                                <p>{% trans "Finally, a local solution designed for the Tunisian Deaf community." %}</p>
+                                <span>{% trans "Parent" %}</span>
                             </div>
                         </div>
                         <div class="item service-item">
                             <div class="author">
-                                <i><img src="{% static 'assets/images/testimonial-author-1.png' %}" alt="Fourth Author"></i>
+                                <i><img src="{% static 'assets/images/testimonial-author-1.png' %}" alt="{% trans "Author" %}"></i>
                             </div>
                             <div class="testimonial-content">
                                 <ul class="stars">
@@ -204,8 +205,8 @@
                                     <li><i class="fa fa-star"></i></li>
                                 </ul>
                                 <h4>Yassine R.</h4>
-                                <p>"TSL is becoming more accessible for everyone. This is real progress."</p>
-                                <span>Local Association</span>
+                                <p>{% trans "TSL is becoming more accessible for everyone. This is real progress." %}</p>
+                                <span>{% trans "Local Association" %}</span>
                             </div>
                         </div>
                     </div>

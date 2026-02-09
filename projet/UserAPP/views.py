@@ -8,16 +8,20 @@ from PIL import Image
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.http import require_POST
 from django.contrib import messages
 import torch
-from .models import UserProfile, Reclamation, WebAuthnCredential
+from .models import Event, UserProfile, Reclamation, WebAuthnCredential
 from .utils_sign import get_signs_for_text
 from .utils import arabic_to_latin  # si tu as ta fonction de translittération
+from .utils_face import compare_face_to_reference, get_enrollment_image_path
 
 
 REPO_ROOT = settings.BASE_DIR.parent
@@ -36,6 +40,23 @@ from fido2.webauthn import (
 )
 from fido2.cose import CoseKey
 from fido2 import cbor
+
+FACE_DISTANCE_THRESHOLD = 0.60  # Default face-match threshold (lower = stricter).
+
+
+def _find_user_by_email_or_username(value):
+    # Resolve login target for face verification and WebAuthn flows.
+    cleaned = (value or "").strip()
+    if not cleaned:
+        return None
+    user_obj = User.objects.filter(email__iexact=cleaned).first()
+    if user_obj is None:
+        user_obj = User.objects.filter(username__iexact=cleaned).first()
+    return user_obj
+
+
+def _superuser_required(view_func):
+    return user_passes_test(lambda user: user.is_active and user.is_superuser, login_url="/signin/")(view_func)
 
 
 def home(request):
@@ -184,6 +205,7 @@ def signin(request):
         email_or_username_raw = request.POST.get("email", "").strip()
         email_or_username = email_or_username_raw.lower()
         password = request.POST.get("password", "")
+        next_url = request.POST.get("next") or request.GET.get("next")
 
         user = authenticate(request, username=email_or_username, password=password)
         if user is None:
@@ -197,6 +219,10 @@ def signin(request):
             context["error"] = "Invalid credentials."
         else:
             login(request, user)
+            if user.is_superuser:
+                return redirect("/backoffice/events/")
+            if next_url:
+                return redirect(next_url)
             return redirect("/")
 
     return render(request, "signin.html", context)
@@ -215,6 +241,7 @@ def profile(request):
 
 
 def _get_fido2_server(request):
+    # Configure WebAuthn RP settings based on the current host.
     host = request.get_host().split(":")[0]
     origin = f"{request.scheme}://{request.get_host()}"
     rp = PublicKeyCredentialRpEntity(
@@ -232,6 +259,7 @@ def webauthn_register_page(request):
 
 
 def webauthn_register_options(request):
+    # Begin WebAuthn registration (creates publicKey options).
     if not request.user.is_authenticated:
         return JsonResponse({"error": "Authentication required."}, status=401)
     if request.method != "POST":
@@ -260,6 +288,7 @@ def webauthn_register_options(request):
 
 
 def webauthn_register_verify(request):
+    # Complete WebAuthn registration and store credential.
     if not request.user.is_authenticated:
         return JsonResponse({"error": "Authentication required."}, status=401)
     if request.method != "POST":
@@ -292,6 +321,7 @@ def webauthn_register_verify(request):
 
 
 def webauthn_authenticate_options(request):
+    # Begin WebAuthn authentication for a user (allowCredentials).
     if request.method != "POST":
         return JsonResponse({"error": "Invalid method."}, status=405)
 
@@ -331,6 +361,7 @@ def webauthn_authenticate_options(request):
 
 
 def webauthn_authenticate_verify(request):
+    # Complete WebAuthn authentication and sign in the user.
     if request.method != "POST":
         return JsonResponse({"error": "Invalid method."}, status=405)
 
@@ -364,6 +395,45 @@ def webauthn_authenticate_verify(request):
 
     login(request, user_obj)
     return JsonResponse({"status": "ok"})
+
+
+@require_POST
+def face_verify(request):
+    # Face recognition login using live camera capture + reference image.
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON."}, status=400)
+
+    email_or_username = data.get("email")
+    live_image = data.get("image")
+    if not email_or_username:
+        return JsonResponse({"error": "Email is required."}, status=400)
+    if not live_image:
+        return JsonResponse({"error": "Live image is required."}, status=400)
+
+    user_obj = _find_user_by_email_or_username(email_or_username)
+    if user_obj is None:
+        return JsonResponse({"error": "Account not found."}, status=404)
+
+    profile_data = UserProfile.objects.filter(user=user_obj).first()
+    enrollment_path = get_enrollment_image_path(settings.MEDIA_ROOT, user_obj.id)
+    if enrollment_path.exists():
+        reference_path = enrollment_path
+    elif profile_data and profile_data.profile_image:
+        reference_path = Path(profile_data.profile_image.path)
+    else:
+        return JsonResponse({"error": "No profile photo or enrollment selfie found."}, status=400)
+
+    is_match, distance, error = compare_face_to_reference(reference_path, live_image, FACE_DISTANCE_THRESHOLD)
+    if error:
+        return JsonResponse({"error": error}, status=400)
+
+    if not is_match:
+        return JsonResponse({"error": "Face did not match the reference photo.", "distance": distance}, status=401)
+
+    login(request, user_obj)
+    return JsonResponse({"status": "ok", "distance": distance})
 
 
 def edit_profile(request):
@@ -473,3 +543,40 @@ def get_animation(request):
             
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
+@_superuser_required
+def backoffice_events(request):
+    context = {"events": Event.objects.order_by("-date"), "error": "", "success": ""}
+    if request.method == "POST":
+        name = request.POST.get("name", "").strip()
+        date = request.POST.get("date", "").strip()
+        description = request.POST.get("description", "").strip()
+        location = request.POST.get("location", "").strip()
+        image = request.FILES.get("image")
+
+        if not name or not date or not description:
+            context["error"] = "Please fill in name, date, and description."
+            return render(request, "BACKEND/events.html", context)
+
+        Event.objects.create(
+            name=name,
+            date=date,
+            description=description,
+            location=location,
+            image=image,
+        )
+        context["success"] = "Event created successfully."
+        context["events"] = Event.objects.order_by("-date")
+
+    return render(request, "BACKEND/events.html", context)
+
+
+@_superuser_required
+def backoffice_users(request):
+    users = User.objects.select_related("userprofile").order_by("-date_joined")
+    return render(request, "BACKEND/users.html", {"users": users})
+
+
+@_superuser_required
+def backoffice_reclamations(request):
+    reclamations = Reclamation.objects.order_by("-created_at")
+    return render(request, "BACKEND/reclamations.html", {"reclamations": reclamations})
